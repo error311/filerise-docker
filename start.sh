@@ -2,25 +2,13 @@
 
 echo "🚀 Running start.sh..."
 
-# Check if web app files exist (ignore empty uploads folder)
+# Ensure web app files are present
 if [ ! -f "/web/index.html" ]; then
-    echo "🌱 Web app not found in /web. Downloading from GitHub..."
-
-    # Ensure clean /web directory
-    rm -rf /web/*
+    echo "🌱 /web is empty. Copying web app from /var/www/html..."
     mkdir -p /web
-
-    # Download and extract the web app
-    curl -L --retry 5 --retry-delay 10 \
-        https://github.com/error311/multi-file-upload-editor/archive/refs/heads/master.zip -o /tmp/app.zip
-
-    unzip /tmp/app.zip -d /tmp
-    mv /tmp/multi-file-upload-editor-master/* /web
-    rm -rf /tmp/app.zip /tmp/multi-file-upload-editor-master
-
-    echo "✅ Web app successfully downloaded to /web."
+    cp -R /var/www/html/* /web
 else
-    echo "📁 Web app already populated. Skipping download."
+    echo "📁 Web app already populated. Skipping copy."
 fi
 
 # Ensure uploads folder exists
