@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🚀 Running start.sh..."
+echo "🚀 Running start.sh...."
 
 # Ensure /web exists and populate if empty
 if [ ! -f "/web/index.html" ]; then
