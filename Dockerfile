@@ -15,8 +15,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
 ARG PUID=99
 ARG PGID=100
 
-# Set Apache to match Unraid user and group
-RUN usermod -u ${PUID} www-data && groupmod -g ${PGID} www-data
+# Ensure the user and group IDs are changed only if they differ
+RUN if [ $(id -u www-data) -ne ${PUID} ]; then usermod -u ${PUID} www-data; fi && \
+    if [ $(id -g www-data) -ne ${PGID} ]; then groupmod -g ${PGID} www-data; fi
 
 # Install Apache, PHP 8.1, and required extensions
 RUN apt-get update && \
