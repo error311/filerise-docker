@@ -11,6 +11,13 @@ ENV DEBIAN_FRONTEND=noninteractive \
     UPLOAD_MAX_FILESIZE=5G \
     POST_MAX_SIZE=5G
 
+# Default Unraid UID and GID (99:100)
+ARG PUID=99
+ARG PGID=100
+
+# Set Apache to match Unraid user and group
+RUN usermod -u ${PUID} www-data && groupmod -g ${PGID} www-data
+
 # Install Apache, PHP 8.1, and required extensions
 RUN apt-get update && \
     apt-get upgrade -y && \
@@ -35,10 +42,10 @@ RUN git clone https://github.com/error311/multi-file-upload-editor.git /web && \
     rm -rf /web/.git && \
     mkdir -p /web/uploads
 
-# Set correct ownership and permissions for Apache
+# Set correct ownership and permissions for Unraid (99:100)
 RUN chown -R www-data:www-data /web && \
     chmod -R 755 /web && \
-    chmod -R 755 /web/uploads
+    chmod -R 775 /web/uploads
 
 # Ensure Apache treats /web as its root
 RUN rm -rf /var/www && ln -s /web /var/www
