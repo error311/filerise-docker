@@ -34,21 +34,21 @@ RUN apt-get update && \
     php-json \
     php-curl \
     ca-certificates \
+    curl \
     unzip \
+    git \
     openssl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy web app source code (bypass GitHub dependency)
-WORKDIR /var/www/html
-
-# Download web app as ZIP if GitHub clone fails
+# Download web app as ZIP and extract
 RUN curl -L https://github.com/error311/multi-file-upload-editor/archive/refs/heads/main.zip -o /tmp/app.zip && \
+    apt-get install -y unzip && \
     unzip /tmp/app.zip -d /var/www/html && \
     mv /var/www/html/multi-file-upload-editor-main/* /var/www/html && \
     rm -rf /tmp/app.zip /var/www/html/multi-file-upload-editor-main
 
-# Ensure startup script copies the web app if missing
+# Copy startup script and make executable
 COPY start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
