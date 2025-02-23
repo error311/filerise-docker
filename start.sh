@@ -2,10 +2,18 @@
 
 echo "🚀 Running start.sh..."
 
-# Ensure web app files are present
+# Ensure /web exists and populate if empty
 if [ ! -f "/web/index.html" ]; then
-    echo "🌱 /web is empty. Copying web app from /var/www/html..."
+    echo "🌱 Web app not found in /web. Copying from /var/www/html..."
     mkdir -p /web
+
+    # Remove default Apache placeholder
+    if [ -f "/var/www/html/index.html" ]; then
+        echo "🗑️ Removing default Apache index.html..."
+        rm -f /var/www/html/index.html
+    fi
+
+    # Copy the web app to /web
     cp -R /var/www/html/* /web
 else
     echo "📁 Web app already populated. Skipping copy."
