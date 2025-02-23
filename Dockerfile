@@ -27,14 +27,12 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Remove default Apache index.html
+# 🟢 Remove Apache default index.html
 RUN rm -f /var/www/html/index.html
 
-# Ensure /var/www/html exists and has proper permissions
-RUN mkdir -p /var/www/html
-
-# Download and extract web app into /var/www/html during build
-RUN curl -L --retry 5 --retry-delay 10 \
+# Ensure /var/www/html exists and download web app
+RUN mkdir -p /var/www/html && \
+    curl -L --retry 5 --retry-delay 10 \
     https://github.com/error311/multi-file-upload-editor/archive/refs/heads/master.zip -o /tmp/app.zip && \
     unzip /tmp/app.zip -d /var/www/html && \
     mv /var/www/html/multi-file-upload-editor-master/* /var/www/html && \
