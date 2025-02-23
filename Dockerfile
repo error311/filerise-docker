@@ -11,48 +11,29 @@ ENV DEBIAN_FRONTEND=noninteractive \
     UPLOAD_MAX_FILESIZE=5G \
     POST_MAX_SIZE=5G
 
-# Default Unraid UID and GID (99:100)
+# Default Unraid UID and GID
 ARG PUID=99
 ARG PGID=100
 
-# Ensure UID and GID are correctly set
-RUN set -eux; \
-    if [ "$(id -u www-data)" != "${PUID}" ]; then \
-        usermod -u ${PUID} www-data || echo "UID already set"; \
-    fi; \
-    if [ "$(id -g www-data)" != "${PGID}" ]; then \
-        groupmod -g ${PGID} www-data || echo "GID already set"; \
-    fi; \
-    usermod -g ${PGID} www-data
+# Ensure UID/GID are correct
+RUN usermod -u ${PUID} www-data && groupmod -g ${PGID} www-data
 
 # Install Apache, PHP, and required packages
 RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends \
-    apache2 \
-    php \
-    php-json \
-    php-curl \
-    ca-certificates \
-    git \
-    openssl && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y apache2 php php-json php-curl git ca-certificates openssl && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Enable Apache modules and configure PHP
 RUN a2enmod rewrite && \
     echo "upload_max_filesize = ${UPLOAD_MAX_FILESIZE}" > /etc/php/8.1/apache2/conf.d/90-custom.ini && \
     echo "post_max_size = ${POST_MAX_SIZE}" >> /etc/php/8.1/apache2/conf.d/90-custom.ini
 
-# Set up web directory and correct permissions
-RUN git clone https://github.com/error311/multi-file-upload-editor.git /web && \
-    rm -rf /web/.git && \
-    mkdir -p /web/uploads && \
-    chown -R www-data:users /web && \
-    chmod -R 775 /web/uploads
+# Copy web app to temporary location
+RUN git clone https://github.com/error311/multi-file-upload-editor.git /tmp/web
 
-# Ensure Apache treats /web as root
-RUN rm -rf /var/www && ln -s /web /var/www
+# Ensure startup script copies to /web if empty
+COPY start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
 
 # Apache site configuration
 RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/000-default.conf && \
@@ -69,5 +50,5 @@ RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/000-default.conf &&
 # Expose ports
 EXPOSE 80 443
 
-# Run Apache in foreground
-CMD ["apachectl", "-D", "FOREGROUND"]
+# Run startup script
+CMD ["/usr/local/bin/start.sh"]
