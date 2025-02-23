@@ -15,11 +15,18 @@ ENV DEBIAN_FRONTEND=noninteractive \
 ARG PUID=99
 ARG PGID=100
 
-# Set Apache user to Unraid PUID/PGID
-RUN usermod -u ${PUID} www-data && groupmod -g ${PGID} www-data
+# Check UID/GID and change only if needed
+RUN set -eux; \
+    if [ "$(id -u www-data)" != "${PUID}" ]; then \
+        usermod -u ${PUID} www-data || echo "UID already set"; \
+    fi; \
+    if [ "$(id -g www-data)" != "${PGID}" ]; then \
+        groupmod -g ${PGID} www-data || echo "GID already set"; \
+    fi
 
 # Install Apache, PHP, and required packages
 RUN apt-get update && \
+    apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
     apache2 \
     php \
