@@ -27,6 +27,9 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Ensure /var/www/html exists and has web app files
+RUN mkdir -p /var/www/html
+
 # Copy startup script
 COPY start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
