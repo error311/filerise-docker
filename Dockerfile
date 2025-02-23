@@ -34,20 +34,21 @@ RUN apt-get update && \
     php-json \
     php-curl \
     ca-certificates \
-    git \
+    unzip \
     openssl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Enable Apache modules and configure PHP
-RUN a2enmod rewrite && \
-    echo "upload_max_filesize = ${UPLOAD_MAX_FILESIZE}" > /etc/php/8.1/apache2/conf.d/90-custom.ini && \
-    echo "post_max_size = ${POST_MAX_SIZE}" >> /etc/php/8.1/apache2/conf.d/90-custom.ini
+# Copy web app source code (bypass GitHub dependency)
+WORKDIR /var/www/html
 
-# Clone web app to /var/www for first-run population
-RUN git clone https://github.com/error311/multi-file-upload-editor.git /var/www/html
+# Download web app as ZIP if GitHub clone fails
+RUN curl -L https://github.com/error311/multi-file-upload-editor/archive/refs/heads/main.zip -o /tmp/app.zip && \
+    unzip /tmp/app.zip -d /var/www/html && \
+    mv /var/www/html/multi-file-upload-editor-main/* /var/www/html && \
+    rm -rf /tmp/app.zip /var/www/html/multi-file-upload-editor-main
 
-# Copy start.sh for first-run logic and make it executable
+# Ensure startup script copies the web app if missing
 COPY start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
