@@ -15,14 +15,15 @@ ENV DEBIAN_FRONTEND=noninteractive \
 ARG PUID=99
 ARG PGID=100
 
-# Check UID/GID and change only if needed
+# Ensure UID and GID are correctly set
 RUN set -eux; \
     if [ "$(id -u www-data)" != "${PUID}" ]; then \
         usermod -u ${PUID} www-data || echo "UID already set"; \
     fi; \
     if [ "$(id -g www-data)" != "${PGID}" ]; then \
         groupmod -g ${PGID} www-data || echo "GID already set"; \
-    fi
+    fi; \
+    usermod -g ${PGID} www-data
 
 # Install Apache, PHP, and required packages
 RUN apt-get update && \
@@ -47,7 +48,7 @@ RUN a2enmod rewrite && \
 RUN git clone https://github.com/error311/multi-file-upload-editor.git /web && \
     rm -rf /web/.git && \
     mkdir -p /web/uploads && \
-    chown -R www-data:www-data /web && \
+    chown -R www-data:users /web && \
     chmod -R 775 /web/uploads
 
 # Ensure Apache treats /web as root
