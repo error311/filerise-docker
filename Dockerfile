@@ -41,15 +41,15 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Ensure /var/www/html exists and has proper permissions
-RUN mkdir -p /var/www/html && chmod -R 775 /var/www/html
+# Ensure /var/www exists and has proper permissions
+RUN mkdir -p /var/www && chmod -R 775 /var/www
 
-# Download and extract web app directly from GitHub
+# Download and extract web app into /var/www
 RUN curl -L --retry 5 --retry-delay 10 \
     https://github.com/error311/multi-file-upload-editor/archive/refs/heads/master.zip -o /tmp/app.zip && \
-    unzip /tmp/app.zip -d /var/www/html && \
-    mv /var/www/html/multi-file-upload-editor-master/* /var/www/html && \
-    rm -rf /tmp/app.zip /var/www/html/multi-file-upload-editor-master
+    unzip /tmp/app.zip -d /var/www && \
+    mv /var/www/multi-file-upload-editor-master/* /var/www && \
+    rm -rf /tmp/app.zip /var/www/multi-file-upload-editor-master
 
 # Copy startup script and make executable
 COPY start.sh /usr/local/bin/start.sh
