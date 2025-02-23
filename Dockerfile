@@ -44,12 +44,12 @@ RUN a2enmod rewrite && \
     echo "upload_max_filesize = ${UPLOAD_MAX_FILESIZE}" > /etc/php/8.1/apache2/conf.d/90-custom.ini && \
     echo "post_max_size = ${POST_MAX_SIZE}" >> /etc/php/8.1/apache2/conf.d/90-custom.ini
 
-# Copy web app to temporary location
+# Clone web app to /tmp/web for initial population
 RUN git clone https://github.com/error311/multi-file-upload-editor.git /tmp/web
 
-# Ensure /web is populated if empty
-COPY start.sh /usr/local/bin/start.sh
-RUN chmod +x /usr/local/bin/start.sh
+# Copy first-run script and make it executable
+COPY first-run.sh /usr/local/bin/first-run.sh
+RUN chmod +x /usr/local/bin/first-run.sh
 
 # Apache site configuration
 RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/000-default.conf && \
@@ -68,4 +68,4 @@ RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/000-default.conf &&
 EXPOSE 80 443
 
 # Run startup script
-CMD ["/usr/local/bin/start.sh"]
+CMD ["/usr/local/bin/first-run.sh"]
