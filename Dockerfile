@@ -44,8 +44,8 @@ RUN a2enmod rewrite && \
     echo "upload_max_filesize = ${UPLOAD_MAX_FILESIZE}" > /etc/php/8.1/apache2/conf.d/90-custom.ini && \
     echo "post_max_size = ${POST_MAX_SIZE}" >> /etc/php/8.1/apache2/conf.d/90-custom.ini
 
-# Clone web app to /tmp/web for first-run population
-RUN git clone https://github.com/error311/multi-file-upload-editor.git /tmp/web
+# Clone web app to /var/www for first-run population
+RUN git clone https://github.com/error311/multi-file-upload-editor.git /var/www/html
 
 # Copy start.sh for first-run logic and make it executable
 COPY start.sh /usr/local/bin/start.sh
