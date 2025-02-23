@@ -15,18 +15,11 @@ ENV DEBIAN_FRONTEND=noninteractive \
 ARG PUID=99
 ARG PGID=100
 
-# Change UID/GID only if different and suppress errors if already exists
-RUN set -eux; \
-    if [ "$(id -u www-data)" != "${PUID}" ]; then \
-        usermod -u ${PUID} www-data || echo "UID already set"; \
-    fi; \
-    if [ "$(id -g www-data)" != "${PGID}" ]; then \
-        groupmod -g ${PGID} www-data || echo "GID already set"; \
-    fi
+# Set Apache user to Unraid PUID/PGID
+RUN usermod -u ${PUID} www-data && groupmod -g ${PGID} www-data
 
-# Install Apache, PHP 8.1, and required extensions
+# Install Apache, PHP, and required packages
 RUN apt-get update && \
-    apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
     apache2 \
     php \
@@ -43,17 +36,14 @@ RUN a2enmod rewrite && \
     echo "upload_max_filesize = ${UPLOAD_MAX_FILESIZE}" > /etc/php/8.1/apache2/conf.d/90-custom.ini && \
     echo "post_max_size = ${POST_MAX_SIZE}" >> /etc/php/8.1/apache2/conf.d/90-custom.ini
 
-# Set up web directory
+# Set up web directory and correct permissions
 RUN git clone https://github.com/error311/multi-file-upload-editor.git /web && \
     rm -rf /web/.git && \
-    mkdir -p /web/uploads
-
-# Set correct ownership and permissions for Unraid (99:100)
-RUN chown -R www-data:www-data /web && \
-    chmod -R 755 /web && \
+    mkdir -p /web/uploads && \
+    chown -R www-data:www-data /web && \
     chmod -R 775 /web/uploads
 
-# Ensure Apache treats /web as its root
+# Ensure Apache treats /web as root
 RUN rm -rf /var/www && ln -s /web /var/www
 
 # Apache site configuration
