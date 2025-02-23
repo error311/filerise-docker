@@ -11,20 +11,6 @@ ENV DEBIAN_FRONTEND=noninteractive \
     UPLOAD_MAX_FILESIZE=5G \
     POST_MAX_SIZE=5G
 
-# Default Unraid UID and GID (99:100)
-ARG PUID=99
-ARG PGID=100
-
-# Ensure UID/GID are only changed if different
-RUN set -eux; \
-    if [ "$(id -u www-data)" != "${PUID}" ]; then \
-        usermod -u ${PUID} www-data || echo "UID already set"; \
-    fi; \
-    if [ "$(id -g www-data)" != "${PGID}" ]; then \
-        groupmod -g ${PGID} www-data || echo "GID already set"; \
-    fi; \
-    usermod -g ${PGID} www-data
-
 # Install Apache, PHP, and required packages
 RUN apt-get update && \
     apt-get upgrade -y && \
@@ -41,17 +27,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Ensure /var/www exists and has proper permissions
-RUN mkdir -p /var/www && chmod -R 775 /var/www
-
-# Download and extract web app into /var/www
-RUN curl -L --retry 5 --retry-delay 10 \
-    https://github.com/error311/multi-file-upload-editor/archive/refs/heads/master.zip -o /tmp/app.zip && \
-    unzip /tmp/app.zip -d /var/www && \
-    mv /var/www/multi-file-upload-editor-master/* /var/www && \
-    rm -rf /tmp/app.zip /var/www/multi-file-upload-editor-master
-
-# Copy startup script and make executable
+# Copy startup script
 COPY start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
