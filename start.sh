@@ -4,8 +4,8 @@ echo "🚀 Running start.sh..."
 
 # Ensure /web exists and populate if empty
 if [ ! -d "/web" ] || [ -z "$(ls -A /web)" ]; then
-    echo "🌱 /web is empty. Populating with web app code..."
-    cp -R /tmp/web/* /web
+    echo "🌱 /web is empty. Populating with web app code from /var/www/html..."
+    cp -R /var/www/html/* /web
 else
     echo "✅ /web already populated. Skipping copy."
 fi
