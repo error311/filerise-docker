@@ -27,4 +27,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: your-dockerhub-username/your-repo-name:latest
+          tags: error311/multi-file-upload-editor-docker:latest
