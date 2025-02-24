@@ -1,7 +1,9 @@
-# multi-file-upload-editor-docker
+## multi-file-upload-editor-docker
 
-This docker uses apache php and updates to increase security.
+  #dockerfile
+  Install Apache, PHP, and required packages
+  adds multi file upload editor to /var/www directory (https://github.com/error311/multi-file-upload-editor)
 
-It adds multi file upload editor to /www/var (https://github.com/error311/multi-file-upload-editor)
-
-start.sh used for permissions and changing env variables
+  #start.sh
+  Permissions changes 
+  Allows configuration changes with env variables for apache & multi file upload editor
