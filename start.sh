@@ -2,33 +2,20 @@
 
 echo "🚀 Running start.sh..."
 
-# Check if /web is populated (by looking for index.html)
-if [ ! -f "/web/index.html" ]; then
-    echo "🌱 /web is empty. Copying web app from /var/www..."
-    mkdir -p /web
-    cp -R /var/www/* /web
-    echo "✅ Web app successfully copied to /web."
-else
-    echo "📁 Web app already populated. Skipping copy."
-fi
+# No need to copy the web app since it's included in the image at /var/www
 
-# Ensure uploads folder exists in /web
-mkdir -p /web/uploads
+# Ensure the uploads directory exists (this is the only persistent folder mapped in Unraid)
+mkdir -p /var/www/uploads
 
-# Create a symlink so that /var/www/uploads points to /web/uploads (for web app compatibility)
-if [ ! -L /var/www/uploads ]; then
-    echo "🔗 Creating symlink: /var/www/uploads -> /web/uploads"
-    ln -s /web/uploads /var/www/uploads
-else
-    echo "🔗 Symlink /var/www/uploads already exists."
-fi
+# Fix permissions for the uploads folder
+echo "🔑 Fixing permissions for /var/www/uploads..."
+chown -R ${PUID:-99}:${PGID:-100} /var/www/uploads
+chmod -R 775 /var/www/uploads
 
-# Always fix permissions for /web (this runs on every startup)
-echo "🔑 Fixing permissions for /web..."
-find /web -type f -exec chmod 664 {} \;
-find /web -type d -exec chmod 775 {} \;
-chown -R ${PUID:-99}:${PGID:-100} /web
+# (Optional) If you want to be extra sure, list the folder contents:
+echo "📂 Contents of /var/www/uploads:"
+ls -ld /var/www/uploads
 
-# Start Apache in the foreground
+# Start Apache
 echo "🔥 Starting Apache..."
 exec apachectl -D FOREGROUND
