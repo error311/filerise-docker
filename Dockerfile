@@ -25,7 +25,7 @@ RUN set -eux; \
     fi; \
     usermod -g ${PGID} www-data
 
-# Install Apache, PHP, and required packages
+# Install Apache, PHP, Git, and required dependencies
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
@@ -38,6 +38,7 @@ RUN apt-get update && \
       unzip \
       git \
       openssl && \
+    git --version && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
