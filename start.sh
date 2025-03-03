@@ -18,6 +18,10 @@ if [ -f "$CONFIG_FILE" ]; then
     echo "   Setting TOTAL_UPLOAD_SIZE to $TOTAL_UPLOAD_SIZE"
     sed -i "s|define('TOTAL_UPLOAD_SIZE',[[:space:]]*'[^']*');|define('TOTAL_UPLOAD_SIZE', '$TOTAL_UPLOAD_SIZE');|" "$CONFIG_FILE"
   fi
+  if [ -n "$USERS_DIR" ]; then
+  echo "   Setting USERS_DIR to $USERS_DIR"
+  sed -i "s|define('USERS_DIR',[[:space:]]*'[^']*');|define('USERS_DIR', '$USERS_DIR');|" "$CONFIG_FILE"
+  fi
 fi
 
 # Update PHP upload limits at runtime if TOTAL_UPLOAD_SIZE is set.
