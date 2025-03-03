@@ -38,5 +38,5 @@ jobs:
           tags: error311/multi-file-upload-editor-docker:latest
           cache-from: type=local,src=/tmp/.docker-cache
           cache-to: type=local,dest=/tmp/.docker-cache
-          build-args: |
-            GIT_TOKEN=${{ secrets.GIT_TOKEN }}
+          secrets: |
+            id=git_token,src=${{ secrets.GIT_TOKEN }}
