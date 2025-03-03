@@ -25,7 +25,7 @@ RUN set -eux; \
     fi; \
     usermod -g ${PGID} www-data
 
-# Install Apache, PHP, Git, and required dependencies
+# Install dependencies
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
@@ -38,17 +38,16 @@ RUN apt-get update && \
       unzip \
       git \
       openssl && \
-    git --version && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Ensure /var/www exists and remove any default Apache index.html
+# Create the /var/www directory
 RUN mkdir -p /var/www && rm -f /var/www/html/index.html
 
-# Define GitHub Token as an Argument (passed during build)
-ARG GIT_TOKEN
-RUN echo "Using GitHub token: ${GIT_TOKEN:0:4}********" && \
-    git clone --depth 1 https://${GIT_TOKEN}@github.com/error311/multi-file-upload-editor.git /var/www
+# Securely clone the private repo using a temporary Git credential helper
+RUN git config --global credential.helper cache && \
+    git clone --depth 1 https://oauth2:${{ secrets.GIT_TOKEN }}@github.com/error311/multi-file-upload-editor.git /var/www && \
+    git config --global --unset credential.helper
 
 # Fix ownership and permissions for /var/www so files are writable by www-data
 RUN chown -R www-data:www-data /var/www && chmod -R 775 /var/www
