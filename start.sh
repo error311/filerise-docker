@@ -19,8 +19,8 @@ if [ -f "$CONFIG_FILE" ]; then
     sed -i "s|define('TOTAL_UPLOAD_SIZE',[[:space:]]*'[^']*');|define('TOTAL_UPLOAD_SIZE', '$TOTAL_UPLOAD_SIZE');|" "$CONFIG_FILE"
   fi
   if [ -n "$USERS_DIR" ]; then
-  echo "   Setting USERS_DIR to $USERS_DIR"
-  sed -i "s|define('USERS_DIR',[[:space:]]*'[^']*');|define('USERS_DIR', '$USERS_DIR');|" "$CONFIG_FILE"
+    echo "   Setting USERS_DIR to $USERS_DIR"
+    sed -i "s|define('USERS_DIR',[[:space:]]*'[^']*');|define('USERS_DIR', '$USERS_DIR');|" "$CONFIG_FILE"
   fi
 fi
 
@@ -41,24 +41,31 @@ fi
 if [ -n "$HTTPS_PORT" ]; then
   echo "🔄 Setting Apache HTTPS port to $HTTPS_PORT"
   sed -i "s/Listen 443/Listen $HTTPS_PORT/" /etc/apache2/ports.conf
-  # If you have an HTTPS VirtualHost, update it similarly.
 fi
 
 echo "📁 Web app is served from /var/www."
 
 # Ensure the uploads folder exists in /var/www
 mkdir -p /var/www/uploads
-
-# Fix permissions for the uploads folder
 echo "🔑 Fixing permissions for /var/www/uploads..."
 chown -R ${PUID:-99}:${PGID:-100} /var/www/uploads
 chmod -R 775 /var/www/uploads
 
-# Ensure the users folder exists
+# Ensure the users folder exists in /var/www
 mkdir -p /var/www/users
 echo "🔑 Fixing permissions for /var/www/users..."
 chown -R ${PUID:-99}:${PGID:-100} /var/www/users
 chmod -R 775 /var/www/users
+
+# Create users.txt only if it doesn't already exist (preserving persistent data)
+if [ ! -f /var/www/users/users.txt ]; then
+  echo "ℹ️ users.txt not found in persistent storage; creating new file..."
+  echo "" > /var/www/users/users.txt
+  chown ${PUID:-99}:${PGID:-100} /var/www/users/users.txt
+  chmod 664 /var/www/users/users.txt
+else
+  echo "ℹ️ users.txt already exists; preserving persistent data."
+fi
 
 # Optionally, fix permissions for the rest of /var/www
 echo "🔑 Fixing permissions for /var/www..."
@@ -66,6 +73,5 @@ find /var/www -type f -exec chmod 664 {} \;
 find /var/www -type d -exec chmod 775 {} \;
 chown -R ${PUID:-99}:${PGID:-100} /var/www
 
-# Start Apache
 echo "🔥 Starting Apache..."
 exec apachectl -D FOREGROUND
