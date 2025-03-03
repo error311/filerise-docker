@@ -48,7 +48,6 @@ RUN apt-get update && \
       php-curl \
       ca-certificates \
       curl \
-      unzip \
       git \
       openssl && \
     apt-get clean && \
