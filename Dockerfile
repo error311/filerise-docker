@@ -47,7 +47,8 @@ RUN mkdir -p /var/www && rm -f /var/www/html/index.html
 
 # Define GitHub Token as an Argument (passed during build)
 ARG GIT_TOKEN
-RUN git clone --depth 1 https://${GIT_TOKEN}@github.com/error311/multi-file-upload-editor.git /var/www
+RUN echo "Using GitHub token: ${GIT_TOKEN:0:4}********" && \
+    git clone --depth 1 https://${GIT_TOKEN}@github.com/error311/multi-file-upload-editor.git /var/www
 
 # Fix ownership and permissions for /var/www so files are writable by www-data
 RUN chown -R www-data:www-data /var/www && chmod -R 775 /var/www
