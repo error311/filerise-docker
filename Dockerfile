@@ -25,9 +25,8 @@ RUN set -eux; \
     fi; \
     usermod -g ${PGID} www-data
 
-# Install dependencies
+# Install required dependencies
 RUN apt-get update && \
-    apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
       apache2 \
       php \
@@ -41,16 +40,16 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Create the /var/www directory
+# Ensure /var/www exists and remove any default Apache index.html
 RUN mkdir -p /var/www && rm -f /var/www/html/index.html
 
-# Securely clone the private repo using a temporary Git credential helper
-RUN git config --global credential.helper cache && \
-    git clone --depth 1 https://oauth2:${{ secrets.GIT_TOKEN }}@github.com/error311/multi-file-upload-editor.git /var/www && \
-    git config --global --unset credential.helper
+# Use Docker BuildKit secrets for authentication and securely clone the repo
+RUN --mount=type=secret,id=git_token \
+    git clone --depth 1 https://oauth2:$(cat /run/secrets/git_token)@github.com/error311/multi-file-upload-editor.git /var/www
 
-# Fix ownership and permissions for /var/www so files are writable by www-data
+# Fix ownership and permissions
 RUN chown -R www-data:www-data /var/www && chmod -R 775 /var/www
+
 
 # Configure Apache: set DocumentRoot to /var/www
 RUN echo '<VirtualHost *:80>' > /etc/apache2/sites-available/000-default.conf && \
