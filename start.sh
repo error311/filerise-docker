@@ -54,6 +54,12 @@ echo "🔑 Fixing permissions for /var/www/uploads..."
 chown -R ${PUID:-99}:${PGID:-100} /var/www/uploads
 chmod -R 775 /var/www/uploads
 
+# Ensure the users folder exists
+mkdir -p /var/www/users
+echo "🔑 Fixing permissions for /var/www/users..."
+chown -R ${PUID:-99}:${PGID:-100} /var/www/users
+chmod -R 775 /var/www/users
+
 # Optionally, fix permissions for the rest of /var/www
 echo "🔑 Fixing permissions for /var/www..."
 find /var/www -type f -exec chmod 664 {} \;
