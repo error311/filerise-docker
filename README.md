@@ -11,3 +11,9 @@
   Permissions changes 
   
   Allows configuration changes with env variables for apache & multi file upload editor
+
+
+  # changelog:
+
+  Changes 3/3/2025: 
+  folder management added & some refactoring
