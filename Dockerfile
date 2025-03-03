@@ -44,13 +44,8 @@ RUN apt-get update && \
 # Ensure /var/www exists and remove any default Apache index.html
 RUN mkdir -p /var/www && rm -f /var/www/html/index.html
 
-# Download and extract the web app from GitHub into /var/www
-RUN mkdir -p /var/www/html && \
-    curl -L --retry 5 --retry-delay 10 \
-      https://github.com/error311/multi-file-upload-editor/archive/refs/heads/master.zip -o /tmp/app.zip && \
-    unzip /tmp/app.zip -d /var/www && \
-    mv /var/www/multi-file-upload-editor-master/* /var/www && \
-    rm -rf /tmp/app.zip /var/www/multi-file-upload-editor-master
+# Clone the web app from GitHub into /var/www
+RUN git clone --depth 1 https://github.com/error311/multi-file-upload-editor.git /var/www
 
 # Fix ownership and permissions for /var/www so files are writable by www-data
 RUN chown -R www-data:www-data /var/www && chmod -R 775 /var/www
