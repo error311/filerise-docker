@@ -43,10 +43,9 @@ RUN apt-get update && \
 # Ensure /var/www exists and remove any default Apache index.html
 RUN mkdir -p /var/www && rm -f /var/www/html/index.html
 
-# Use Docker BuildKit secret to securely clone the private repo
+# Securely clone the private repo using Docker BuildKit secrets
 RUN --mount=type=secret,id=git_token \
-    GIT_TOKEN=$(cat /run/secrets/git_token) && \
-    git clone --depth 1 https://oauth2:$GIT_TOKEN@github.com/error311/multi-file-upload-editor.git /var/www
+    git clone --depth 1 https://oauth2:$(cat /run/secrets/git_token)@github.com/error311/multi-file-upload-editor.git /var/www
 
 # Fix ownership and permissions
 RUN chown -R www-data:www-data /var/www && chmod -R 775 /var/www
