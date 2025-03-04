@@ -15,6 +15,16 @@
 
   # changelog:
 
-  Changes 3/3/2025: 
-  
-  folder management added & some refactoring
+ **Changes 3/4/2025:**  
+  Copy & Move functionality added  
+  Header Layout  
+  Modal Popups (Edit, Add User, Remove User) changes  
+  Consolidated table styling  
+  CSS Consolidation  
+  assets folder  
+
+    
+**Changes 3/3/2025:**  
+  folder management added  
+  some refactoring  
+  config added USERS_DIR & USERS_FILE  
