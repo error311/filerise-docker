@@ -11,16 +11,12 @@ if [ -f "$CONFIG_FILE" ]; then
     sed -i "s|define('TIMEZONE',[[:space:]]*'[^']*');|define('TIMEZONE', '$TIMEZONE');|" "$CONFIG_FILE"
   fi
   if [ -n "$DATE_TIME_FORMAT" ]; then
-    echo "   Setting DATE_TIME_FORMAT to $DATE_TIME_FORMAT"
+    echo "🔄 Setting DATE_TIME_FORMAT to $DATE_TIME_FORMAT"
     sed -i "s|define('DATE_TIME_FORMAT',[[:space:]]*'[^']*');|define('DATE_TIME_FORMAT', '$DATE_TIME_FORMAT');|" "$CONFIG_FILE"
   fi
   if [ -n "$TOTAL_UPLOAD_SIZE" ]; then
-    echo "   Setting TOTAL_UPLOAD_SIZE to $TOTAL_UPLOAD_SIZE"
+    echo "🔄 Setting TOTAL_UPLOAD_SIZE to $TOTAL_UPLOAD_SIZE"
     sed -i "s|define('TOTAL_UPLOAD_SIZE',[[:space:]]*'[^']*');|define('TOTAL_UPLOAD_SIZE', '$TOTAL_UPLOAD_SIZE');|" "$CONFIG_FILE"
-  fi
-  if [ -n "$USERS_DIR" ]; then
-    echo "   Setting USERS_DIR to $USERS_DIR"
-    sed -i "s|define('USERS_DIR',[[:space:]]*'[^']*');|define('USERS_DIR', '$USERS_DIR');|" "$CONFIG_FILE"
   fi
 fi
 
@@ -43,6 +39,15 @@ if [ -n "$HTTPS_PORT" ]; then
   sed -i "s/Listen 443/Listen $HTTPS_PORT/" /etc/apache2/ports.conf
 fi
 
+# Update Apache ServerName if environment variable is provided
+if [ -n "$SERVER_NAME" ]; then
+  echo "🔄 Setting Apache ServerName to $SERVER_NAME"
+  echo "ServerName $SERVER_NAME" >> /etc/apache2/apache2.conf
+else
+  echo "🔄 Setting Apache ServerName to default: multi-file-upload-editor"
+  echo "ServerName multi-file-upload-editor" >> /etc/apache2/apache2.conf
+fi
+
 echo "📁 Web app is served from /var/www."
 
 # Ensure the uploads folder exists in /var/www
@@ -57,6 +62,12 @@ echo "🔑 Fixing permissions for /var/www/users..."
 chown -R ${PUID:-99}:${PGID:-100} /var/www/users
 chmod -R 775 /var/www/users
 
+# Ensure the users folder exists in /var/www
+mkdir -p /var/www/metadata
+echo "🔑 Fixing permissions for /var/www/metadata..."
+chown -R ${PUID:-99}:${PGID:-100} /var/www/metadata
+chmod -R 775 /var/www/metadata
+
 # Create users.txt only if it doesn't already exist (preserving persistent data)
 if [ ! -f /var/www/users/users.txt ]; then
   echo "ℹ️ users.txt not found in persistent storage; creating new file..."
@@ -65,6 +76,14 @@ if [ ! -f /var/www/users/users.txt ]; then
   chmod 664 /var/www/users/users.txt
 else
   echo "ℹ️ users.txt already exists; preserving persistent data."
+fi
+
+# Ensure the metadata file exists
+if [ ! -f /var/www/metadata/file_metadata.json ]; then
+  echo "ℹ️ file_metadata.json not found in persistent storage; creating new file..."
+  echo "[]" > /var/www/metadata/file_metadata.json
+  chown ${PUID:-99}:${PGID:-100} /var/www/metadata/file_metadata.json
+  chmod 664 /var/www/metadata/file_metadata.json
 fi
 
 # Optionally, fix permissions for the rest of /var/www
