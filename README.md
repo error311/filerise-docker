@@ -22,6 +22,7 @@
   Consolidated table styling  
   CSS Consolidation  
   assets folder  
+  additional changes and fixes  
 
     
 **Changes 3/3/2025:**  
