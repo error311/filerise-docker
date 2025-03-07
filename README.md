@@ -12,7 +12,6 @@
   
   Allows configuration changes with env variables for apache & multi file upload editor
 
-
   # changelog:
 
   **Changes 3/7/2025:**
