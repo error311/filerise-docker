@@ -16,6 +16,26 @@
 
 ## changelog
 
+## changes 3/10/2025
+
+- File Editing Enhancements:
+  - Integrated CodeMirror into the file editor modal for syntax highlighting, line numbers, and adjustable font size.
+  - Added zoom in/out controls (“A-” / “A+”) in the editor modal to let users adjust the text size and number of visible lines.
+  - Updated the save function to retrieve edited content from the CodeMirror instance (using editor.getValue()) instead of the underlying textarea.
+- Image Preview Improvements:
+  - Added a new “Preview” button (with a Material icon) in the Actions column for image files.
+  - Implemented an image preview modal that centers content using flexbox, scales images using object-fit: contain, and maintains the original aspect ratio.
+  - Fixed URL encoding for subfolder paths so that images in subfolders (e.g. NewFolder2/Vita) load correctly without encoding slashes.
+- Download ZIP Modal Updates:
+  - Replaced the prompt-based download ZIP with a modal dialog that allows users to enter a custom name for the ZIP file.
+  - Updated the modal logic to ensure proper flow (cancel/confirm) and pass the custom filename to the download process.
+- Folder URL Handling:
+  - Modified the folder path construction in the file list rendering to split folder names into segments and encode each segment individually. This prevents encoding of slashes, ensuring correct URLs for files in subfolders.
+- General UI & Functionality:
+  - Ensured that all global functions (e.g., toggleRowSelection, updateRowHighlight, and sortFiles) are declared and attached to window so that inline event handlers can access them.
+  - Maintained responsive design, preserving existing features such as pagination, sorting, batch operations (delete, copy, move), and folder management.
+  - Updated event listener initialization to work with new modal features and ensure smooth UI interactions.
+
 ## changes 3/8/2025
 
 - Validation was added in endpoints.
