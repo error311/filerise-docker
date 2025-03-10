@@ -38,7 +38,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 ARG PUID=99
 ARG PGID=100
 
-# Install Apache, PHP, and required packages
+# Install Apache, PHP, and required packages (including php-zip)
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
@@ -46,6 +46,7 @@ RUN apt-get update && \
       php \
       php-json \
       php-curl \
+      php-zip \
       ca-certificates \
       curl \
       git \
