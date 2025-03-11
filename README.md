@@ -16,6 +16,12 @@
 
 ## changelog
 
+## changes 3/11/2025
+
+- CSS Refactoring
+- Dark / Light Modes added which automatically adapts to the operating system’s theme preference by default, with a manual toggle option.
+- JS inlines moved to CSS
+
 ## changes 3/10/2025
 
 - File Editing Enhancements:
