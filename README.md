@@ -16,6 +16,11 @@
 
 ## changelog
 
+## changes 3/14/2025
+
+- style adjustments
+- folder/subfolder upload support 
+
 ## changes 3/11/2025
 
 - CSS Refactoring
