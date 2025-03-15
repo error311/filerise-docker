@@ -18,8 +18,11 @@
 
 ## changes 3/14/2025
 
-- style adjustments
-- folder/subfolder upload support 
+- Style adjustments
+- Folder/subfolder upload support
+- Persistent UI elements Items Per Page & Dark/Light modes.
+- File upload scrollbar list
+- Remove files from upload list
 
 ## changes 3/11/2025
 
