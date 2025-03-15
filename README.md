@@ -16,6 +16,11 @@
 
 ## changelog
 
+## changes 3/15/2025
+- Preview video, images or PDFs added
+- Different material icons for each
+- custom css to adjust centering
+
 ## changes 3/14/2025
 
 - Style adjustments
