@@ -22,6 +22,7 @@
 - Custom css to adjust centering
 - Persistent folder tree view
 - Fixed folder tree alignment
+- Persistent last opened folder
 
 ## changes 3/14/2025
 
