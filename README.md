@@ -16,6 +16,9 @@
 
 ## changelog
 
+## changes 3/17/2025
+- refactoring/reorganize domUtils, fileManager.js & folerManager.js
+
 ## changes 3/15/2025
 - Preview video, images or PDFs added
 - Different material icons for each
