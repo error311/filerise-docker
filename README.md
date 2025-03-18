@@ -16,6 +16,9 @@
 
 ## changelog
 
+## changes 3/18/2025
+- **CSRF Protection:** All state-changing endpoints (such as those for folder and file operations) include CSRF token validation to ensure that only legitimate requests from authenticated users are processed.
+
 ## changes 3/17/2025
 - refactoring/reorganize domUtils, fileManager.js & folerManager.js
 
