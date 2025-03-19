@@ -16,6 +16,88 @@
 
 ## changelog
 
+## changes 3/19/2025
+
+## Session & Security Enhancements
+- **Secure Session Cookies:**  
+  - Configured session cookies with a 2-hour lifetime, HTTPOnly, and SameSite settings.
+  - Regenerating the session ID upon login to mitigate session fixation.
+- **CSRF Protection:**  
+  - Ensured the CSRF token is generated in `config.php` and returned via a `token.php` endpoint.
+  - Updated front-end code (e.g. in `main.js`) to fetch the CSRF token and update meta tags.
+- **Session Expiration Handling:**  
+  - Updated the `loadFileList` function to check for HTTP 401 responses and trigger a logout or redirect if the session has expired.
+- **Security:**
+  - A proxy download mechanism has been implemented (via endpoints like `download.php` and `downloadZip.php`) so that every file download request goes through a PHP script. This script validates the session and CSRF token before streaming the file, ensuring that even if a file URL is guessed, only authenticated users can access it.
+
+## File Management Improvements
+
+### Unique Naming to Prevent Overwrites
+- **Copy & Move Operations:**  
+  - Added a helper function `getUniqueFileName()` to both `copyFiles.php` and `moveFiles.php` that checks for duplicates and appends a counter (e.g., “ (1)”) until a unique filename is determined.
+  - Updated metadata handling so that when a file is copied/moved and renamed, the corresponding metadata JSON (per-folder) is updated using the new unique filename.
+- **Rename Functionality:**  
+  - Updated `renameFile.php` to:
+    - Allow filenames with parentheses by updating the regex.
+    - Check if a file with the new name already exists.
+    - Generate a unique name using similar logic if needed.
+    - Update folder-specific metadata accordingly.
+
+### Metadata Management
+- **Per-Folder Metadata Files:**  
+  - Changed metadata storage so that each folder uses its own metadata file (e.g., `root_metadata.json` for the root folder and `FolderName_metadata.json` for subfolders).
+  - Updated metadata file path generation functions to replace slashes, backslashes, and spaces with dashes.
+
+## Gallery / Grid View Enhancements
+- **Gallery (Grid) View:**  
+  - Added a toggle option to switch between a traditional table view and a gallery view.
+  - The gallery view arranges image thumbnails in a grid layout with configurable column options (e.g., 3, 4, or 5 columns).
+  - Under each thumbnail, action buttons (Download, Edit, Rename, Share) are displayed for quick access.
+- **Preview Modal Enhancements:**  
+  - Updated the image preview modal to include navigation buttons (prev/next) for browsing through images.
+  - Improved scaling and styling of preview modals for a better user experience.
+
+## Share Link Functionality
+- **Share Link Generation (createShareLink.php):**  
+  - Generate shareable links for files with:
+    - A secure token.
+    - Configurable expiration times (including options for 30, 60, 120, 180, 240 minutes, and a 1-day option).
+    - Optional password protection (passwords are hashed).
+  - Store share links in a JSON file (`share_links.json`) with details (folder, file, expiration timestamp, hashed password).
+- **Share Endpoint (share.php):**  
+  - Validate tokens, expiration, and passwords.
+  - Serve files inline for images or force download for other file types.
+  - Share URL is configurable via environment variables or auto-detected from the server.
+- **Front-End Configuration:**  
+  - Created a `token.php` endpoint that returns CSRF token and SHARE_URL.
+  - Updated the front-end (in `main.js`) to fetch configuration data and update meta tags for CSRF and share URL, allowing index.html to remain static.
+
+## User Authentication & Management
+- **Authentication:**  
+  - Secure, session-based authentication with CSRF protection.
+  - Admin users can add or remove users.
+  - Passwords are hashed using PHP’s `password_hash()` function.
+
+## Responsive, Dynamic & Persistent UI
+- **Responsive Design:**  
+  - The interface adapts to various screen sizes by hiding non-critical columns on small devices.
+  - Asynchronous updates (using Fetch API and XMLHttpRequest) keep the UI responsive without full page reloads.
+  - Persistent settings (items per page, dark/light mode, folder tree state, last open folder) are stored (e.g., in localStorage).
+- **Dark Mode/Light Mode:**  
+  - Automatically adapts to the OS theme preference.
+  - Manual toggle is available, with persistence of user preference.
+  - CodeMirror editor theme adjusts based on dark/light mode.
+
+## Apache & .htaccess / Server Security
+- **Disable Directory Listing:**  
+  - Recommended adding an .htaccess file (e.g., in `uploads/`) with `Options -Indexes` to disable directory indexing. 
+- **Restrict Direct File Access:**  
+  - Protected sensitive files (e.g., users.txt) via .htaccess.
+  - Filtered out hidden files (files beginning with a dot) from the file list in `getFileList.php`.
+- **Proxy Download Considerations:**  
+  - Although files are served directly from the uploads folder, administrators are advised to either use a secure internal network or proxy downloads through a PHP script that checks user authentication.
+
+
 ## changes 3/18/2025
 - **CSRF Protection:** All state-changing endpoints (such as those for folder and file operations) include CSRF token validation to ensure that only legitimate requests from authenticated users are processed.
 
