@@ -26,7 +26,7 @@
   - Ensured the CSRF token is generated in `config.php` and returned via a `token.php` endpoint.
   - Updated front-end code (e.g. in `main.js`) to fetch the CSRF token and update meta tags.
 - **Session Expiration Handling:**  
-  - Updated the `loadFileList` function to check for HTTP 401 responses and trigger a logout or redirect if the session has expired.
+  - Updated the `loadFileList` and other functions to check for HTTP 401 responses and trigger a logout or redirect if the session has expired.
 
 ## File Management Improvements
 
@@ -69,22 +69,6 @@
 - **Front-End Configuration:**  
   - Created a `token.php` endpoint that returns CSRF token and SHARE_URL.
   - Updated the front-end (in `main.js`) to fetch configuration data and update meta tags for CSRF and share URL, allowing index.html to remain static.
-
-## User Authentication & Management
-- **Authentication:**  
-  - Secure, session-based authentication with CSRF protection.
-  - Admin users can add or remove users.
-  - Passwords are hashed using PHP’s `password_hash()` function.
-
-## Responsive, Dynamic & Persistent UI
-- **Responsive Design:**  
-  - The interface adapts to various screen sizes by hiding non-critical columns on small devices.
-  - Asynchronous updates (using Fetch API and XMLHttpRequest) keep the UI responsive without full page reloads.
-  - Persistent settings (items per page, dark/light mode, folder tree state, last open folder) are stored (e.g., in localStorage).
-- **Dark Mode/Light Mode:**  
-  - Automatically adapts to the OS theme preference.
-  - Manual toggle is available, with persistence of user preference.
-  - CodeMirror editor theme adjusts based on dark/light mode.
 
 ## Apache & .htaccess / Server Security
 - **Disable Directory Listing:**  
