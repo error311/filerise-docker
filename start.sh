@@ -18,6 +18,14 @@ if [ -f "$CONFIG_FILE" ]; then
     echo "🔄 Setting TOTAL_UPLOAD_SIZE to $TOTAL_UPLOAD_SIZE"
     sed -i "s|define('TOTAL_UPLOAD_SIZE',[[:space:]]*'[^']*');|define('TOTAL_UPLOAD_SIZE', '$TOTAL_UPLOAD_SIZE');|" "$CONFIG_FILE"
   fi
+  if [ -n "$SECURE" ]; then
+  echo "🔄 Setting SECURE to $SECURE"
+  sed -i "s|\$envSecure = getenv('SECURE');|\$envSecure = '$SECURE';|" "$CONFIG_FILE"
+  fi
+  if [ -n "$SHARE_URL" ]; then
+  echo "🔄 Setting SHARE_URL to $SHARE_URL"
+  sed -i "s|define('SHARE_URL',[[:space:]]*'[^']*');|define('SHARE_URL', '$SHARE_URL');|" "$CONFIG_FILE"
+  fi
 fi
 
 # Update PHP upload limits at runtime if TOTAL_UPLOAD_SIZE is set.
