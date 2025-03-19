@@ -27,8 +27,6 @@
   - Updated front-end code (e.g. in `main.js`) to fetch the CSRF token and update meta tags.
 - **Session Expiration Handling:**  
   - Updated the `loadFileList` function to check for HTTP 401 responses and trigger a logout or redirect if the session has expired.
-- **Security:**
-  - A proxy download mechanism has been implemented (via endpoints like `download.php` and `downloadZip.php`) so that every file download request goes through a PHP script. This script validates the session and CSRF token before streaming the file, ensuring that even if a file URL is guessed, only authenticated users can access it.
 
 ## File Management Improvements
 
@@ -94,9 +92,10 @@
 - **Restrict Direct File Access:**  
   - Protected sensitive files (e.g., users.txt) via .htaccess.
   - Filtered out hidden files (files beginning with a dot) from the file list in `getFileList.php`.
-- **Proxy Download Considerations:**  
-  - Although files are served directly from the uploads folder, administrators are advised to either use a secure internal network or proxy downloads through a PHP script that checks user authentication.
+- **Proxy Download:**  
+  - A proxy download mechanism has been implemented (via endpoints like `download.php` and `downloadZip.php`) so that every file download request goes through a PHP script. This script validates the session and CSRF token before streaming the file, ensuring that even if a file URL is guessed, only authenticated users can access it.
 
+---
 
 ## changes 3/18/2025
 - **CSRF Protection:** All state-changing endpoints (such as those for folder and file operations) include CSRF token validation to ensure that only legitimate requests from authenticated users are processed.
