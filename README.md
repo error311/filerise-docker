@@ -16,6 +16,17 @@
 
 ## changelog
 
+## changes 3/20/2025
+
+- **Drag & Drop Feature**
+  - For a single file: shows a file icon alongside the file name.
+  - For multiple files: shows a file icon and a count of files.
+  - Styling Adjustments:
+  - Modified drag image styling (using inline-flex, auto width, and appropriate padding) so that the drag image only sizes to its content and does not extend off the screen.
+  - Revised the folder drop handler so that it reads the array of file names from the drag data and sends that array (instead of a single file name) to the server (moveFiles.php) for processing.
+  - Attached dragover, dragleave, and drop event listeners to folder tree nodes (the elements with the class folder-option) to enable a drop target.
+  - Added a global dragover event listener (in main.js) that auto-scrolls the page when the mouse is near the top or bottom of the viewport during a drag operation. This ensures you can reach the folder tree even if you’re far down the file list.
+
 ## changes 3/19/2025
 
 ## Session & Security Enhancements
