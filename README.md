@@ -16,6 +16,31 @@
 
 ## changelog
 
+## changes 3/21/2025
+
+- **Trash Feature Implementation**
+  - Added functionality to move deleted files to a Trash folder.
+  - Implemented trash metadata storage (trash.json) capturing original folder, file name, trashed timestamp, uploader, and deletedBy.
+  - Developed restore feature allowing admins to restore individual or all files from Trash.
+  - Developed delete feature allowing permanent deletion (Delete Selected and Delete All) from Trash.
+  - Implemented auto-purge of trash items older than 3 days.
+  - Updated trash modal design for better user experience.
+  - Incorporated material icons with tooltips in restore/delete buttons.
+  - Improved responsiveness of the trash modal with a centered layout and updated CSS.
+  - Fixed issues where trashed files with missing metadata were not restored properly.
+  - Resolved problems with the auto-purge mechanism when trash.json was empty or contained unexpected data.
+  - Adjusted admin button logic to correctly display the restore button for administrators.
+  - Improved error handling on restore and delete actions to provide more informative messages to users.
+- **Other changes**
+  - CSS adjusted (this needs to be refactored)
+  - Fixed setup mode CSRF issue in addUser.php
+  - Adjusted modals buttons in index.html & folderManager.js
+  - Changed upload.php safe pattern
+  - Hide trash folder
+  - Reworked auth.js
+
+---
+
 ## changes 3/20/2025
 
 - **Drag & Drop Feature**
@@ -95,8 +120,12 @@
 ## changes 3/18/2025
 - **CSRF Protection:** All state-changing endpoints (such as those for folder and file operations) include CSRF token validation to ensure that only legitimate requests from authenticated users are processed.
 
+--- 
+
 ## changes 3/17/2025
 - refactoring/reorganize domUtils, fileManager.js & folerManager.js
+
+---
 
 ## changes 3/15/2025
 - Preview video, images or PDFs added
@@ -106,6 +135,8 @@
 - Fixed folder tree alignment
 - Persistent last opened folder
 
+---
+
 ## changes 3/14/2025
 
 - Style adjustments
@@ -114,11 +145,15 @@
 - File upload scrollbar list
 - Remove files from upload list
 
+---
+
 ## changes 3/11/2025
 
 - CSS Refactoring
 - Dark / Light Modes added which automatically adapts to the operating system’s theme preference by default, with a manual toggle option.
 - JS inlines moved to CSS
+
+---
 
 ## changes 3/10/2025
 
@@ -140,12 +175,16 @@
   - Maintained responsive design, preserving existing features such as pagination, sorting, batch operations (delete, copy, move), and folder management.
   - Updated event listener initialization to work with new modal features and ensure smooth UI interactions.
 
+---
+
 ## changes 3/8/2025
 
 - Validation was added in endpoints.
 - Toast notifications were implemented in domUtils.js and integrated throughout the app.
 - Modals replaced inline prompts and confirms for rename, create, delete, copy, and move actions.
 - Folder tree UI was added and improved to be interactive plus reflect the current state after actions.
+
+---
 
 ## changes 3/7/2025
 
@@ -179,6 +218,8 @@
   
 *This changelog and feature summary reflect the improvements made during the refactor from a monolithic utils file to modular ES6 components, along with enhancements in UI responsiveness, sorting, file uploads, and file management operations.*
 
+---
+
 ## Changes 3/4/2025
 
 - Copy & Move functionality added  
@@ -188,6 +229,8 @@
 - CSS Consolidation  
 - assets folder  
 - additional changes and fixes
+
+---
 
 ## Changes 3/3/2025
 
