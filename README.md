@@ -16,6 +16,11 @@
 
 ## changelog
 
+## changes 3/22/2025
+- Change Password added and visibile to all users.
+- Brute force protection added and a log file for fail2ban created
+- Fix add user and setup user issue
+
 ## changes 3/21/2025
 
 - **Trash Feature Implementation**
