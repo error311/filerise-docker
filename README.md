@@ -16,13 +16,39 @@
 
 ## changelog
 
+## changes 3/23/2025 v1.0.1
+- **Resumable File Upload Integration and Folder Support**
+  - **Legacy Drag-and-Drop Folder Uploads:**
+    - Supports both file and folder uploads via drag-and-drop.
+    - Recursively traverses dropped folders to extract files.
+    - Uses original XHR-based upload code for folder uploads so that files are placed in the correct folder (i.e. based on the current folder in the app’s folder tree).
+  - **Resumable.js for File Picker Uploads:**
+    - Integrates Resumable.js for file uploads via the file picker.
+    - Provides pause, resume, and retry functionality:
+    - Pause/Resume: A pause/resume button is added for each file selected via the file picker. When the user clicks pause, the file upload pauses and the button switches to a “play” icon. When the user clicks it again, the system triggers a resume sequence (calling the upload function twice to ensure proper restart).
+    - Retry: If a file upload encounters an error, the pause/resume button changes to a “replay” icon, allowing the user to retry the upload.
+    - During upload, the UI displays the progress percentage along with the calculated speed (bytes/KB/MB per second).
+    - Files are previewed using material icons for non-image files and actual image previews for image files (using a helper function that creates an object URL for image files).
+  - **Temporary Chunk Folder Removal:**
+    - When a user cancels an upload via the remove button (X), a POST request is sent to a PHP endpoint (removeChunks.php) that:
+    - Validates the CSRF token.
+    - Recursively deletes the temporary folder (which stores file chunks) from the uploads directory.
+  - **Additional Details:**
+    - The file list UI remains visible (instead of auto-disappearing after 5 seconds) if there are any files still present or errors, ensuring that users can retry failed uploads.
+    - The system uses a chunk size of 3MB and supports multiple simultaneous uploads.
+    - All endpoints include CSRF protection and input validation to ensure secure operations.
+
+---
+
 ## changes 3/22/2025
 - Change Password added and visibile to all users.
 - Brute force protection added and a log file for fail2ban created
 - Fix add user and setup user issue
 - Added folder breadcrumb with drag and drop support
 
-## changes 3/21/2025
+---
+
+## changes 3/21/2025 v1.0.0
 
 - **Trash Feature Implementation**
   - Added functionality to move deleted files to a Trash folder.
@@ -57,6 +83,8 @@
   - Revised the folder drop handler so that it reads the array of file names from the drag data and sends that array (instead of a single file name) to the server (moveFiles.php) for processing.
   - Attached dragover, dragleave, and drop event listeners to folder tree nodes (the elements with the class folder-option) to enable a drop target.
   - Added a global dragover event listener (in main.js) that auto-scrolls the page when the mouse is near the top or bottom of the viewport during a drag operation. This ensures you can reach the folder tree even if you’re far down the file list.
+ 
+---
 
 ## changes 3/19/2025
 
