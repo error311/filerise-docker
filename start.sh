@@ -2,6 +2,11 @@
 
 echo "🚀 Running start.sh..."
 
+# Warn if default persistent tokens key is in use
+if [ "$PERSISTENT_TOKENS_KEY" = "default_please_change_this_key" ]; then
+  echo "⚠️ WARNING: Using default persistent tokens key. Please override PERSISTENT_TOKENS_KEY for production."
+fi
+
 # Update config.php based on environment variables
 CONFIG_FILE="/var/www/config.php"
 if [ -f "$CONFIG_FILE" ]; then

@@ -1,22 +1,55 @@
 # multi-file-upload-editor-docker
 
-## dockerfile
-
-- Install Apache, PHP, required packages and update
-- adds multi file upload editor to /var/www directory (<https://github.com/error311/multi-file-upload-editor>)
+Install instructions and features located here: (<https://github.com/error311/multi-file-upload-editor>)
 
 ---
 
-## start.sh
+## changes 3/24/2025
 
-- Permissions changes
-- Allows configuration changes with env variables for apache & multi file upload editor
+### config.php
+
+- **Encryption Functions Added:**
+  - Introduced `encryptData()` and `decryptData()` functions using AES‑256‑CBC to encrypt and decrypt persistent tokens.
+- **Encryption Key Handling:**
+  - Added code to load the encryption key from an environment variable (`PERSISTENT_TOKENS_KEY`) with a fallback default.
+- **Persistent Token Auto-Login:**
+  - Modified the auto-login logic to check for a `remember_me_token` cookie.
+  - If the persistent tokens file exists, it now reads and decrypts its content before decoding JSON.
+  - If a token is expired, the code removes the token, re-encrypts the updated array, writes it back to disk, and clears the cookie.
+- **Cookie and Session Settings:**
+  - No major changes aside from integrating the encryption functionality into the token handling.
+
+### auth.php
+
+- **Login Process and “Remember Me” Functionality:**
+  - When “Remember me” is checked, generates a secure random token.
+  - Loads the persistent tokens file (if it exists), decrypts its content, and decodes the JSON.
+  - Inserts the new token (with associated username and expiry) into the persistent tokens array.
+  - Encrypts the updated tokens array and writes it back to the file.
+  - Sets the `remember_me_token` cookie using the `$secure` flag and expiry.
+- **Authentication & Brute Force Protection:**
+  - The authentication logic and brute-force protection remain largely unchanged.
+
+### logout.php
+
+- **Persistent Token Removal:**
+  - If a `remember_me_token` cookie exists, the script loads the persistent tokens file, decrypts its content, removes the token if present, re-encrypts the array, and writes it back.
+- **Cookie Clearance and Session Destruction:**
+  - Clears the `remember_me_token` cookie.
+  - Destroys session data as before.
+
+### networkUtils.js
+
+- **Fetch Wrapper Enhancements:**
+  - Modified `sendRequest()` to clone the response before attempting to parse JSON.
+  - If JSON parsing fails (e.g., because of unexpected response content), the cloned response is used to read the text, preventing the “Body is disturbed or locked” error.
+- **Error Handling Improvements:**
+  - Improved error handling by ensuring the response body is read only once.
 
 ---
-
-## changelog
 
 ## changes 3/23/2025 v1.0.1
+
 - **Resumable File Upload Integration and Folder Support**
   - **Legacy Drag-and-Drop Folder Uploads:**
     - Supports both file and folder uploads via drag-and-drop.
@@ -41,6 +74,7 @@
 ---
 
 ## changes 3/22/2025
+
 - Change Password added and visibile to all users.
 - Brute force protection added and a log file for fail2ban created
 - Fix add user and setup user issue
@@ -83,12 +117,13 @@
   - Revised the folder drop handler so that it reads the array of file names from the drag data and sends that array (instead of a single file name) to the server (moveFiles.php) for processing.
   - Attached dragover, dragleave, and drop event listeners to folder tree nodes (the elements with the class folder-option) to enable a drop target.
   - Added a global dragover event listener (in main.js) that auto-scrolls the page when the mouse is near the top or bottom of the viewport during a drag operation. This ensures you can reach the folder tree even if you’re far down the file list.
- 
+
 ---
 
 ## changes 3/19/2025
 
 ## Session & Security Enhancements
+
 - **Secure Session Cookies:**  
   - Configured session cookies with a 2-hour lifetime, HTTPOnly, and SameSite settings.
   - Regenerating the session ID upon login to mitigate session fixation.
@@ -101,6 +136,7 @@
 ## File Management Improvements
 
 ### Unique Naming to Prevent Overwrites
+
 - **Copy & Move Operations:**  
   - Added a helper function `getUniqueFileName()` to both `copyFiles.php` and `moveFiles.php` that checks for duplicates and appends a counter (e.g., “ (1)”) until a unique filename is determined.
   - Updated metadata handling so that when a file is copied/moved and renamed, the corresponding metadata JSON (per-folder) is updated using the new unique filename.
@@ -112,11 +148,13 @@
     - Update folder-specific metadata accordingly.
 
 ### Metadata Management
+
 - **Per-Folder Metadata Files:**  
   - Changed metadata storage so that each folder uses its own metadata file (e.g., `root_metadata.json` for the root folder and `FolderName_metadata.json` for subfolders).
   - Updated metadata file path generation functions to replace slashes, backslashes, and spaces with dashes.
 
 ## Gallery / Grid View Enhancements
+
 - **Gallery (Grid) View:**  
   - Added a toggle option to switch between a traditional table view and a gallery view.
   - The gallery view arranges image thumbnails in a grid layout with configurable column options (e.g., 3, 4, or 5 columns).
@@ -126,6 +164,7 @@
   - Improved scaling and styling of preview modals for a better user experience.
 
 ## Share Link Functionality
+
 - **Share Link Generation (createShareLink.php):**  
   - Generate shareable links for files with:
     - A secure token.
@@ -141,8 +180,9 @@
   - Updated the front-end (in `main.js`) to fetch configuration data and update meta tags for CSRF and share URL, allowing index.html to remain static.
 
 ## Apache & .htaccess / Server Security
+
 - **Disable Directory Listing:**  
-  - Recommended adding an .htaccess file (e.g., in `uploads/`) with `Options -Indexes` to disable directory indexing. 
+  - Recommended adding an .htaccess file (e.g., in `uploads/`) with `Options -Indexes` to disable directory indexing.
 - **Restrict Direct File Access:**  
   - Protected sensitive files (e.g., users.txt) via .htaccess.
   - Filtered out hidden files (files beginning with a dot) from the file list in `getFileList.php`.
@@ -152,16 +192,19 @@
 ---
 
 ## changes 3/18/2025
+
 - **CSRF Protection:** All state-changing endpoints (such as those for folder and file operations) include CSRF token validation to ensure that only legitimate requests from authenticated users are processed.
 
---- 
+---
 
 ## changes 3/17/2025
+
 - refactoring/reorganize domUtils, fileManager.js & folerManager.js
 
 ---
 
 ## changes 3/15/2025
+
 - Preview video, images or PDFs added
 - Different material icons for each
 - Custom css to adjust centering

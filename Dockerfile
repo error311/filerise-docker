@@ -32,7 +32,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
     LANGUAGE=en_US.UTF-8 \
     TERM=xterm \
     UPLOAD_MAX_FILESIZE=5G \
-    POST_MAX_SIZE=5G
+    POST_MAX_SIZE=5G \
+    PERSISTENT_TOKENS_KEY=default_please_change_this_key
 
 # Default Unraid UID and GID (override via container env variables if needed)
 ARG PUID=99
