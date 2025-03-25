@@ -4,6 +4,46 @@ Install instructions and features located here: (<https://github.com/error311/mu
 
 ---
 
+## changes 3/25/2025
+
+- **Context Menu Enhancements:**
+  - **Right‑Click Context Menu:**
+    - Added context menu support for file list rows so that right‑clicking shows a custom menu.
+    - When multiple files are selected, options like “Delete Selected”, “Copy Selected”, “Move Selected”, “Download Zip” are shown.
+    - When a file with a “.zip” extension is among the selections, an “Extract Zip” option is added.
+  - **Single File Options:**
+    - For a single selected file, additional items (“Preview”, “Edit”, and “Rename”) are appended.
+    - The “Edit” option appears only if `canEditFile(file.name)` returns true.
+- **Keyboard Shortcuts:**
+  - **Delete Key Shortcut:**
+    - Added a global keydown listener to detect the Delete (or Backspace on Mac) key.
+    - When pressed (and if no input/textarea is focused) with files selected, it triggers `handleDeleteSelected()` to open the delete confirmation modal.
+- **Modals & Enter-Key Handling:**
+  - **attachEnterKeyListener Update:**
+    - Modified the function to use the “keydown” event (instead of “keypress”) for better reliability.
+    - Ensured the modal is made focusable (by setting a `tabindex="-1"`) and focused immediately after being displayed.
+    - This update was applied to modals for rename, download zip, and delete operations.
+  - **Delete Modal Specific:**
+    - It was necessary to call `attachEnterKeyListener` for the delete modal after setting its display to “block” to ensure it captures the Enter key.
+- **File Editing Adjustments:**
+  - **Content-Length Check:**
+    - Modified the `editFile` function so that it only blocks files when the Content-Length header is non‑null and greater than 10 MB.
+    - This change allows editing of 0 KB files (or files with Content-Length “0”) without triggering the “File too large” error.
+
+- **Context Menu for Folder Manager:**
+  - Provided a separate implementation for a custom context menu for folder manager elements.
+  - Bound the context menu to both folder tree nodes (`.folder-option`) and breadcrumb links (`.breadcrumb-link`) so that right‑clicking on either triggers a custom menu.
+  - The custom menu for folders includes actions for “Create Folder”, “Rename Folder”, and “Delete Folder.”
+  - Added guidance to ensure that breadcrumb HTML elements contain the appropriate class and `data-folder` attribute.
+- **Keyboard Shortcut for Folder Deletion (Suggestion):**
+  - Suggested adding a global keydown listener in `folderManager.js` to trigger folder deletion (via `openDeleteFolderModal()`) when Delete/Backspace is pressed and a folder other than “root” is selected.
+
+- **Event Listener Timing:**
+  - Ensured that context menu and key event listeners are attached after the corresponding DOM elements are rendered.
+  - Added explicit focus calls (and `tabindex` attributes) for modals to capture keyboard events.
+
+---
+
 ## changes 3/24/2025
 
 ### config.php
