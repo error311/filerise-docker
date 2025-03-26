@@ -35,7 +35,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: error311/multi-file-upload-editor-docker:latest
+          tags: error311/filerise-docker:latest
           cache-from: type=local,src=/tmp/.docker-cache
           cache-to: type=local,dest=/tmp/.docker-cache
           no-cache: true

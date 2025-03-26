@@ -1,6 +1,16 @@
-# multi-file-upload-editor-docker
+# FileRise Docker
 
-Install instructions and features located here: (<https://github.com/error311/multi-file-upload-editor>)
+Install instructions and features located here: (<https://github.com/error311/FileRise>)
+
+---
+
+## changes 3/26/2025
+
+- New name change FileRise - Elevate your file management.
+- Animated logo that rises up once for 3 seconds and falls back down
+- New Side Bar and Top Bar drop areas
+  - Drag and Drop Upload & Folder Management cards
+  - Vertical slide up effect when dropping cards
 
 ---
 

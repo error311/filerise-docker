@@ -15,7 +15,7 @@ RUN apt-get update && \
 RUN mkdir -p /var/www && rm -f /var/www/html/index.html
 
 # Clone the public repository (no token needed)
-RUN git clone --depth 1 https://github.com/error311/multi-file-upload-editor.git /var/www
+RUN git clone --depth 1 https://github.com/error311/filerise.git /var/www
 
 #############################
 # Final Stage – runtime image
