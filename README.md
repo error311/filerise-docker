@@ -3,6 +3,10 @@
 Install instructions and features located here: (<https://github.com/error311/FileRise>)
 
 ---
+## changes 3/27/2025
+
+- Basic Auth added for login.
+- Audio files supported for playback mp3|wav|m4a|ogg|flac|aac|wma|opus
 
 ## changes 3/26/2025
 
