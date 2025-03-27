@@ -11,6 +11,8 @@ Install instructions and features located here: (<https://github.com/error311/Fi
 - New Side Bar and Top Bar drop areas
   - Drag and Drop Upload & Folder Management cards
   - Vertical slide up effect when dropping cards
+- Fixed double root folders when only root folder exist
+- Adjusted side bar drop zone
 
 ---
 
