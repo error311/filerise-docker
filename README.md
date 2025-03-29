@@ -3,10 +3,90 @@
 Install instructions and features located here: (<https://github.com/error311/FileRise>)
 
 ---
+
+## changes 3/29/2025
+
+**Frontend (JavaScript)**
+
+**File:** `auth.js`
+- **Added OIDC Login Flow**
+  - Created a dedicated OIDC login button (`oidcLoginBtn`).
+  - Redirects users to OIDC authentication via `auth.php?oidc`.
+
+- **Admin Panel Button**
+  - Added an “Admin Panel” button (`adminPanelBtn`) with a Material icon (`admin_panel_settings`).
+  - Inserted Admin Panel button directly after the Restore button in the header.
+
+- **Admin Panel Modal**
+  - Built a fully-featured admin panel modal with fields to edit:
+    - OIDC Provider URL
+    - Client ID
+    - Client Secret
+    - Redirect URI
+  - Options to disable Form Login, Basic Auth, or OIDC login methods individually.
+  - Integrated real-time constraint enforcement to ensure at least one authentication method is always enabled.
+  - Saved admin preferences into local storage and backend (via `updateConfig.php`).
+
+- **Dynamic UI Updates**
+  - Added functions (`updateLoginOptionsUI`, `updateLoginOptionsUIFromStorage`) to dynamically show/hide login elements based on admin preferences.
+
+⸻
+
+**Backend (PHP)**
+
+**File:** `auth.php`
+- **OIDC Authentication**
+  - Integrated Jumbojett’s OpenID Connect client to handle OIDC flows.
+  - Reads OIDC configuration from an encrypted JSON file (`adminConfig.json`).
+  - Redirects users to OIDC provider and handles callbacks properly, authenticating users and initiating PHP sessions.
+
+- **Security Enhancements**
+  - Implemented robust error handling for authentication failures.
+  - Session regeneration after successful login to mitigate session fixation risks.
+
+**Configuration Handling**
+
+**File:** `getConfig.php`
+- **Secure Configuration Retrieval**
+  - Retrieves encrypted OIDC configuration from disk.
+  - Decrypts and sends JSON configuration securely to the frontend.
+  - Defaults provided if configuration does not exist.
+
+**File:** `updateConfig.php`
+- **Secure Configuration Updates**
+  - Strictly checks for authenticated admin sessions and validates CSRF tokens.
+  - Validates and sanitizes user input thoroughly (OIDC URL, client ID, secret, redirect URI).
+  - Updates encrypted configuration file securely, ensuring atomic writes (`LOCK_EX`).
+
+- **Consistent Styling**
+  - Modal dynamically adjusts styling based on dark/light modes.
+  - Improved accessibility with clear icons, visual hierarchy, and structured form fields.
+
+- **Enhanced Feedback**
+  - Toast notifications clearly communicate success/error messages for user/admin actions.
+
+⸻
+
+**Security and Best Practices**
+- OIDC credentials are securely stored in an encrypted JSON configuration file.
+- Implemented proper sanitization and validation of input data.
+- Protected sensitive admin routes (`updateConfig.php`) with CSRF validation and strict access control.
+
+⸻
+
+**Possible Improvements**
+- **OIDC Logout Support:** Add explicit logout from OIDC providers.
+- **OIDC Discovery Endpoint:** Automatically fetch provider details from `.well-known/openid-configuration`.
+- **Advanced User Mapping:** Allow administrators to map OIDC claims to internal user roles dynamically.
+
+---
+
 ## changes 3/27/2025
 
 - Basic Auth added for login.
 - Audio files supported for playback mp3|wav|m4a|ogg|flac|aac|wma|opus
+
+---
 
 ## changes 3/26/2025
 

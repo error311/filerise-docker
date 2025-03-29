@@ -1,20 +1,22 @@
 # syntax=docker/dockerfile:1.4
 #############################
-# Builder Stage – clone repo
+# Composer Stage – install PHP dependencies
 #############################
-FROM ubuntu:22.04 AS builder
+FROM composer:2 as composer
+WORKDIR /app
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --optimize-autoloader
 
-# Install only what is needed to clone the repo
+#############################
+# Repo Stage – clone the repo
+#############################
+FROM ubuntu:22.04 as repo
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
       git \
       ca-certificates && \
     rm -rf /var/lib/apt/lists/*
-
-# Create /var/www directory (remove any default index.html)
 RUN mkdir -p /var/www && rm -f /var/www/html/index.html
-
-# Clone the public repository (no token needed)
 RUN git clone --depth 1 https://github.com/error311/filerise.git /var/www
 
 #############################
@@ -40,7 +42,6 @@ ARG PUID=99
 ARG PGID=100
 
 # Install Apache, PHP, and required packages (including php-zip)
-# This layer updates and upgrades packages, then cleans up in one command.
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
@@ -66,13 +67,15 @@ RUN set -eux; \
     fi; \
     usermod -g ${PGID} www-data
 
-# Copy the web app from the builder stage
-COPY --from=builder /var/www /var/www
+# Copy the web app from the repo stage
+COPY --from=repo /var/www /var/www
+# Copy the vendor folder (dependencies) from the composer stage
+COPY --from=composer /app/vendor /var/www/vendor
 
 # Fix ownership and permissions for /var/www
 RUN chown -R www-data:www-data /var/www && chmod -R 775 /var/www
 
-# Configure Apache using a heredoc (this avoids quoting issues)
+# Configure Apache using a heredoc
 RUN cat <<'EOF' > /etc/apache2/sites-available/000-default.conf
 <VirtualHost *:80>
     ServerAdmin webmaster@localhost
@@ -87,13 +90,13 @@ RUN cat <<'EOF' > /etc/apache2/sites-available/000-default.conf
 </VirtualHost>
 EOF
 
-# Enable necessary Apache modules (e.g., rewrite)
+# Enable Apache rewrite module
 RUN a2enmod rewrite
 
-# Expose default ports 80 and 443
+# Expose ports
 EXPOSE 80 443
 
-# Copy the startup script into the image and make it executable
+# Copy the startup script and make it executable
 COPY start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
