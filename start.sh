@@ -43,13 +43,13 @@ fi
 # Update Apache ports if environment variables are provided
 if [ -n "$HTTP_PORT" ]; then
   echo "🔄 Setting Apache HTTP port to $HTTP_PORT"
-  sed -i "s/Listen 80/Listen $HTTP_PORT/" /etc/apache2/ports.conf
+  sed -i "s/^Listen 80$/Listen $HTTP_PORT/" /etc/apache2/ports.conf
   sed -i "s/<VirtualHost \*:80>/<VirtualHost *:$HTTP_PORT>/" /etc/apache2/sites-available/000-default.conf
 fi
 
 if [ -n "$HTTPS_PORT" ]; then
   echo "🔄 Setting Apache HTTPS port to $HTTPS_PORT"
-  sed -i "s/Listen 443/Listen $HTTPS_PORT/" /etc/apache2/ports.conf
+  sed -i "s/^Listen 443$/Listen $HTTPS_PORT/" /etc/apache2/ports.conf
 fi
 
 # Update Apache ServerName if environment variable is provided
@@ -57,9 +57,12 @@ if [ -n "$SERVER_NAME" ]; then
   echo "🔄 Setting Apache ServerName to $SERVER_NAME"
   echo "ServerName $SERVER_NAME" >> /etc/apache2/apache2.conf
 else
-  echo "🔄 Setting Apache ServerName to default: multi-file-upload-editor"
-  echo "ServerName multi-file-upload-editor" >> /etc/apache2/apache2.conf
+  echo "🔄 Setting Apache ServerName to default: FileRise"
+  echo "ServerName FileRise" >> /etc/apache2/apache2.conf
 fi
+
+echo "Final /etc/apache2/ports.conf content:"
+cat /etc/apache2/ports.conf
 
 echo "📁 Web app is served from /var/www."
 
