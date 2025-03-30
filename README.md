@@ -4,6 +4,44 @@ Install instructions and features located here: (<https://github.com/error311/Fi
 
 ---
 
+## changes 3/30/2025
+
+- **New Feature:** Generates a QR code for TOTP setup using the Endroid QR Code library.
+- **TOTP Secret Management:**  
+  - Retrieves the current user's TOTP secret from the users file.
+  - If no secret exists, generates a new one using RobThree\Auth\TwoFactorAuth and stores it (encrypted).
+- **Global OTPAuth URL Integration:**  
+  - Checks for a global OTPAuth URL in the admin configuration.
+  - If provided, replaces the `{label}` and `{secret}` placeholders in the URL template; otherwise, falls back to a default otpauth URL.
+- **Security:**  
+  - Enforces session authentication.
+  - Verifies the CSRF token passed via GET parameters.
+
+- **New Feature:** Handles AJAX requests to update the user’s TOTP settings from the User Panel.
+- **TOTP Enable/Disable Handling:**  
+  - If TOTP is disabled, clears the user's TOTP secret from the users file.
+  - If TOTP remains enabled, leaves the stored secret intact.
+- **Security:**  
+  - Validates user authentication and CSRF token before processing the update.
+- **Response:**  
+  - Returns a JSON response indicating whether TOTP has been enabled or disabled successfully.
+
+- **New TOTP Settings Section:**  
+  - A "TOTP Settings" fieldset has been added to the User Panel modal.
+- **Automatic TOTP Setup Trigger:**  
+  - When the "Enable TOTP" checkbox is checked, it automatically triggers the TOTP Setup Modal to display the QR code.
+- **State Management**  
+- **UI Improvements:**  
+  - All modals (User Panel, TOTP Setup, and TOTP Login) now support dark mode styling.
+
+- **Error Handling & Security:**  
+  - Enhanced error handling across all new TOTP-related endpoints.
+  - Added extra CSRF and authentication checks to improve security.
+- **User Experience:**  
+  - Streamlined the onboarding process for TOTP by integrating automatic modal triggers and real-time configuration updates.
+
+---
+
 ## changes 3/29/2025
 
 **Frontend (JavaScript)**

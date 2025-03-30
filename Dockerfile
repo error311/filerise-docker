@@ -8,9 +8,9 @@ COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader
 
 #############################
-# Repo Stage – clone the repo
+# Source Stage – clone the repo
 #############################
-FROM ubuntu:22.04 as repo
+FROM ubuntu:22.04 as appsource
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
       git \
@@ -41,7 +41,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 ARG PUID=99
 ARG PGID=100
 
-# Install Apache, PHP, and required packages (including php-zip)
+# Install Apache, PHP, and required packages (including php-mbstring and php-gd for Endroid QR Code)
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
@@ -50,6 +50,8 @@ RUN apt-get update && \
       php-json \
       php-curl \
       php-zip \
+      php-mbstring \
+      php-gd \
       ca-certificates \
       curl \
       git \
@@ -67,8 +69,8 @@ RUN set -eux; \
     fi; \
     usermod -g ${PGID} www-data
 
-# Copy the web app from the repo stage
-COPY --from=repo /var/www /var/www
+# Copy the web app from the source stage
+COPY --from=appsource /var/www /var/www
 # Copy the vendor folder (dependencies) from the composer stage
 COPY --from=composer /app/vendor /var/www/vendor
 
