@@ -6,6 +6,8 @@ Install instructions and features located here: (<https://github.com/error311/Fi
 
 ## changes 3/31/2025
 
+- **Implemented Video Progress Saving and Resuming**
+
 - **Context Menu Tagging:**  
   - "Tag File" option for single files; "Tag Selected" for multiple files.
 - **Tagging Modals:**  
