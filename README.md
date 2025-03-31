@@ -6,6 +6,8 @@ Install instructions and features located here: (<https://github.com/error311/Fi
 
 ## changes 3/31/2025
 
+- **Chunk merging logic updated to attempt to clear any resumable issues**
+
 - **Implemented Video Progress Saving and Resuming**
 
 - **Context Menu Tagging:**  
