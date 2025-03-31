@@ -4,6 +4,28 @@ Install instructions and features located here: (<https://github.com/error311/Fi
 
 ---
 
+## changes 3/31/2025
+
+- **Context Menu Tagging:**  
+  - "Tag File" option for single files; "Tag Selected" for multiple files.
+- **Tagging Modals:**  
+  - Separate modals for single‑ and multi‑file tagging with custom dropdowns.
+- **Global Tag Store:**  
+  - Reusable tags persisted via `createdTags.json`; dropdown shows tag color and remove icon.
+- **Unified Search:**  
+  - Single search box filters files by name or associated tag(s).
+
+- **saveFileTag.php:**  
+  - Saves file-specific tags and updates global tags (supports removal).
+- **getFileList.php:**  
+  - Returns tag data for each file and the global tag list.
+
+- Added `openMultiTagModal()` for batch tagging.
+- Custom dropdowns with colored tag previews and removal buttons.
+- Filtering logic updated in table and gallery views to combine file name and tag searches.
+
+
+
 ## changes 3/30/2025
 
 - **New Feature:** Generates a QR code for TOTP setup using the Endroid QR Code library.
