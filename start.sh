@@ -78,7 +78,7 @@ echo "🔑 Fixing permissions for /var/www/users..."
 chown -R ${PUID:-99}:${PGID:-100} /var/www/users
 chmod -R 775 /var/www/users
 
-# Ensure the users folder exists in /var/www
+# Ensure the metadata folder exists in /var/www
 mkdir -p /var/www/metadata
 echo "🔑 Fixing permissions for /var/www/metadata..."
 chown -R ${PUID:-99}:${PGID:-100} /var/www/metadata
@@ -94,12 +94,14 @@ else
   echo "ℹ️ users.txt already exists; preserving persistent data."
 fi
 
-# Ensure the metadata file exists
-if [ ! -f /var/www/metadata/file_metadata.json ]; then
-  echo "ℹ️ file_metadata.json not found in persistent storage; creating new file..."
-  echo "[]" > /var/www/metadata/file_metadata.json
-  chown ${PUID:-99}:${PGID:-100} /var/www/metadata/file_metadata.json
-  chmod 664 /var/www/metadata/file_metadata.json
+# Create createdTags.json only if it doesn't already exist (preserving persistent data)
+if [ ! -f /var/www/metadata/createdTags.json ]; then
+  echo "ℹ️ createdTags.json not found in persistent storage; creating new file..."
+  echo "[]" > /var/www/metadata/createdTags.json
+  chown ${PUID:-99}:${PGID:-100} /var/www/metadata/createdTags.json
+  chmod 664 /var/www/metadata/createdTags.json
+else
+  echo "ℹ️ createdTags.json already exists; preserving persistent data."
 fi
 
 # Optionally, fix permissions for the rest of /var/www
