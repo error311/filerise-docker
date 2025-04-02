@@ -4,6 +4,37 @@ Install instructions and features located here: (<https://github.com/error311/Fi
 
 ---
 
+## changes 4/2/2025
+
+- **Admin Panel - User Permissions**
+  - folderOnly - User gets their own root folder.
+  - readOnly - User can't delete, rename, move, copy and other endpoints are blocked.
+  - disableUpload - User can't upload any files.
+  - Encrypted json 'userPermissions.json'
+  - Created 'updateUserPermissions.php' & 'getUserPermissions.php'
+
+- **TOTP Confirmation**
+  - Must confirm code before it will enable TOTP.
+  - 'totp_verify.php' & 'totp_disable.php' were created
+
+- **Basic Auth & OIDC fixes**
+  - Fixed session issues
+  - Improvements for both Basic Auth & OIDC
+
+- Path Normalization
+- Folder Rendering Adjustments
+- Folder Creation Logic adjusted
+- User Panel added username
+- Admin Panel added version number
+- Metadata Adjustments
+- Toast moved to bottom right
+- Help function 'loadUserPermissions()'
+- 'auth.js' split into 'authModals.js' 
+- Empty 'createdTags.json' added
+- And more
+
+---
+
 ## changes 3/31/2025
 
 - **Chunk merging logic updated to attempt to clear any resumable issues**
