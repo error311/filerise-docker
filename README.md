@@ -31,6 +31,9 @@ Install instructions and features located here: (<https://github.com/error311/Fi
 - Help function 'loadUserPermissions()'
 - 'auth.js' split into 'authModals.js' 
 - Empty 'createdTags.json' added
+- Enable MKV video playback if supported
+- Custom toast opacity increased
+- Fixed fileDragStartHandler to work with tagFiles
 - And more
 
 ---
