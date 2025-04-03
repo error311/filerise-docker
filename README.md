@@ -4,6 +4,36 @@ Install instructions and features located here: (<https://github.com/error311/Fi
 
 ---
 
+## changes 4/3/2023
+
+## Change Log for dragAndDrop.js Enhancements
+
+- **Header Drop Zone Integration:**
+  - Added a new header drop zone (`#headerDropArea`) to support dragging cards (Upload and Folder Management) into the header.
+  - Created functionality to display a compact Material icon in the header when a card is dropped there.
+
+- **Modal Popup for Header Cards:**
+  - Implemented a modal overlay that displays the full card when the user hovers or clicks the header icon.
+  - Added toggle functionality so that the modal can be locked open or auto-hide based on mouse interactions.
+
+- **State Preservation via Hidden Container:**
+  - Introduced a hidden container (`#hiddenCardsContainer`) to preserve the original state of the Upload and Folder Management cards.
+  - Modified logic so that instead of removing these cards from the DOM when dropped into the header, they are moved to the hidden container.
+  - Updated modal show/hide functions to move the card from the hidden container into the modal (and back), ensuring interactive elements (e.g., folder tree, file selection) remain fully initialized and retain their state across page refreshes.
+
+- **Local Storage Integration for Header Order:**
+  - Added `saveHeaderOrder()` and `loadHeaderOrder()` functions to persist the header drop zone order.
+  - Integrated header order saving/updating with drag-and-drop events so that header placements are maintained after refresh.
+
+- **General Drag & Drop Enhancements:**
+  - Maintained smooth drag-and-drop animations and reflow for all drop zones (sidebar, top, and header).
+  - Ensured existing functionalities (like file uploads and folder tree interactions) work seamlessly alongside the new header drop zone.
+  
+## Brief Description
+
+The enhancements extend the existing drag-and-drop functionality by adding a header drop zone where cards are represented by a compact Material icon. To preserve interactive state (such as the folder tree’s current folder or file input functionality) across page refreshes, the original cards are never fully removed from the DOM. Instead, they are moved into a hidden container, and when a user interacts with the header icon, the card is temporarily transferred into a modal overlay for full interaction. When the modal is closed, the card is returned to the hidden container, ensuring that its state remains intact. Additionally, header order is saved to local storage so that user-customized layouts persist across sessions.
+
+---
 ## changes 4/2/2025
 
 - **Admin Panel - User Permissions**
