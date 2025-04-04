@@ -4,7 +4,13 @@ Install instructions and features located here: (<https://github.com/error311/Fi
 
 ---
 
-## changes 4/3/2023
+## changes 4/4/2025
+
+- fix(`download.php`): mitigate path traversal vulnerability by validating folder and file inputs
+
+---
+
+## changes 4/3/2025
 
 ## Change Log for dragAndDrop.js Enhancements
 
