@@ -33,6 +33,9 @@ Install instructions and features located here: (<https://github.com/error311/Fi
 
 The enhancements extend the existing drag-and-drop functionality by adding a header drop zone where cards are represented by a compact Material icon. To preserve interactive state (such as the folder tree’s current folder or file input functionality) across page refreshes, the original cards are never fully removed from the DOM. Instead, they are moved into a hidden container, and when a user interacts with the header icon, the card is temporarily transferred into a modal overlay for full interaction. When the modal is closed, the card is returned to the hidden container, ensuring that its state remains intact. Additionally, header order is saved to local storage so that user-customized layouts persist across sessions.
 
+- Fixed OIDC login button DOM.
+- Fixed userPermissions calling username before declared. 
+
 ---
 ## changes 4/2/2025
 
