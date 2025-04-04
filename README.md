@@ -37,6 +37,7 @@ The enhancements extend the existing drag-and-drop functionality by adding a hea
 - Fixed userPermissions calling username before declared.
 - Fixed config.php loadUserPermissions issue.
 - Chain Initialization After CSRF Token Is Loaded
+- loadCsrfTokenWithRetry
 
 ---
 ## changes 4/2/2025
