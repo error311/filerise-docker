@@ -6,6 +6,8 @@ Install instructions and features located here: (<https://github.com/error311/Fi
 
 ## Changes 4/6/2025 v1.0.8
 
+**May need to log out and log back in if using remember me**
+
 Changelog: Modularize fileManager.js
 
 1. **fileListView.js**  
