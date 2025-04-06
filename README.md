@@ -4,6 +4,58 @@ Install instructions and features located here: (<https://github.com/error311/Fi
 
 ---
 
+## Changes 4/6/2025 v1.0.8
+
+Changelog: Modularize fileManager.js
+
+1. **fileListView.js**  
+ • Extracted all table/gallery rendering logic (loadFileList, renderFileTable, renderGalleryView, sortFiles, date parsing, pagination).  
+ • Kept global helpers on window (changePage, changeItemsPerPage).  
+ • Added explicit re‑binding of context‑menu and drag‑drop handlers after each render.  
+2. **filePreview.js**  
+ • Moved “Preview” and “Share” modal code here (previewFile, openShareModal, plus displayFilePreview helper).  
+ • Exposed window.previewFile for inline onclick compatibility.  
+3. **fileEditor.js**  
+ • Isolated CodeMirror editor logic (editFile, saveFile, sizing, theme toggles).  
+ • Exported utility functions (getModeForFile, adjustEditorSize, observeModalResize).  
+4. **fileDragDrop.js**  
+ • Encapsulated all drag‑start and folder drag/drop handlers (fileDragStartHandler, folderDragOverHandler, etc.).  
+5. **fileMenu.js** (formerly contextMenu.js)  
+ • Centralized right‑click context menu construction and binding (showFileContextMenu, fileListContextMenuHandler, bindFileListContextMenu).  
+ • Now calls the correct single vs. multi‑tag modals.  
+6. **fileActions.js**  
+ • Consolidated all “Delete”, “Copy”, “Move”, “Download Zip”, “Extract Zip”, “Rename” workflows and their modals.  
+ • Exposed initFileActions() to wire up toolbar buttons on page load.  
+7. **fileManager.js** (entry point)  
+ • Imports all the above modules.  
+ • On DOM ready: calls initFileActions(), attaches folder tree drag/drop, and global key handlers.
+
+Changelog: OIDC, Basic Auth & TOTP Integration
+
+1. **auth.php (OIDC)**  
+ • Detects callback via `?code` or `?oidc=callback`.  
+ • Checks for a TOTP secret after OIDC auth, stores pending login in session, redirects with `?totp_required=1`.  
+ • Finalizes session only after successful TOTP verification.  
+
+2. **login_basic.php (Basic Auth)**  
+ • After password verification, checks for TOTP secret.  
+ • Stores pending login & secret in session, redirects to TOTP modal.  
+ • Completes session setup only after TOTP verification.  
+
+3. **authModals.js & auth.js**  
+ • Detect `?totp_required=1` and open the TOTP modal.  
+ • Override `showToast` to suppress “Please log in…” during TOTP.  
+ • Wrap `openTOTPLoginModal` to disable Basic/OIDC buttons (but keep form-login visible).  
+ • On invalid TOTP code, keep modal open, clear input, and refocus for retry.  
+
+4. **totp_verify.php**  
+ • Consolidates login and setup TOTP flows in one endpoint.  
+ • Enforces CSRF token and authentication guard.  
+ • Verifies TOTP, regenerates session on success, and clears pending state.  
+ • Production‑hardened: secure cookies, CSP header, rate‑limiting (5 attempts), standardized JSON responses, and robust error handling. 
+
+---
+
 ## changes 4/4/2025
 
 - fix(`download.php`): mitigate path traversal vulnerability by validating folder and file inputs
@@ -17,7 +69,7 @@ Install instructions and features located here: (<https://github.com/error311/Fi
 
 ## changes 4/3/2025
 
-## Change Log for dragAndDrop.js Enhancements
+Change Log for dragAndDrop.js Enhancements
 
 - **Header Drop Zone Integration:**
   - Added a new header drop zone (`#headerDropArea`) to support dragging cards (Upload and Folder Management) into the header.
@@ -45,6 +97,7 @@ Install instructions and features located here: (<https://github.com/error311/Fi
 The enhancements extend the existing drag-and-drop functionality by adding a header drop zone where cards are represented by a compact Material icon. To preserve interactive state (such as the folder tree’s current folder or file input functionality) across page refreshes, the original cards are never fully removed from the DOM. Instead, they are moved into a hidden container, and when a user interacts with the header icon, the card is temporarily transferred into a modal overlay for full interaction. When the modal is closed, the card is returned to the hidden container, ensuring that its state remains intact. Additionally, header order is saved to local storage so that user-customized layouts persist across sessions.
 
 ---
+
 ## changes 4/2/2025
 
 - **Admin Panel - User Permissions**
@@ -102,8 +155,6 @@ The enhancements extend the existing drag-and-drop functionality by adding a hea
 - Added `openMultiTagModal()` for batch tagging.
 - Custom dropdowns with colored tag previews and removal buttons.
 - Filtering logic updated in table and gallery views to combine file name and tag searches.
-
-
 
 ## changes 3/30/2025
 
