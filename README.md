@@ -1,12 +1,15 @@
-# FileRise Docker
+# Changelog
 
-Install instructions and features located here: (<https://github.com/error311/FileRise>)
+## Changes 4/7/2025 v1.0.9
+
+- TOTP one time recovery code added
+- fix(security): mitigate CodeQL alerts by adding SRI attributes and sanitizing DOM content
 
 ---
 
 ## Changes 4/6/2025 v1.0.8
 
-**May need to log out and log back in if using remember me**
+**May need to log out and log back in if using remember me**  
 
 Changelog: Modularize fileManager.js
 
@@ -54,7 +57,7 @@ Changelog: OIDC, Basic Auth & TOTP Integration
  • Consolidates login and setup TOTP flows in one endpoint.  
  • Enforces CSRF token and authentication guard.  
  • Verifies TOTP, regenerates session on success, and clears pending state.  
- • Production‑hardened: secure cookies, CSP header, rate‑limiting (5 attempts), standardized JSON responses, and robust error handling. 
+ • Production‑hardened: secure cookies, CSP header, rate‑limiting (5 attempts), standardized JSON responses, and robust error handling.
 
 ---
 
@@ -125,7 +128,7 @@ The enhancements extend the existing drag-and-drop functionality by adding a hea
 - Metadata Adjustments
 - Toast moved to bottom right
 - Help function 'loadUserPermissions()'
-- 'auth.js' split into 'authModals.js' 
+- 'auth.js' split into 'authModals.js'
 - Empty 'createdTags.json' added
 - Enable MKV video playback if supported
 - Custom toast opacity increased
@@ -198,9 +201,10 @@ The enhancements extend the existing drag-and-drop functionality by adding a hea
 
 ## changes 3/29/2025
 
-**Frontend (JavaScript)**
+**Frontend (JavaScript)**  
 
 **File:** `auth.js`
+
 - **Added OIDC Login Flow**
   - Created a dedicated OIDC login button (`oidcLoginBtn`).
   - Redirects users to OIDC authentication via `auth.php?oidc`.
@@ -224,9 +228,10 @@ The enhancements extend the existing drag-and-drop functionality by adding a hea
 
 ⸻
 
-**Backend (PHP)**
+**Backend (PHP)**  
 
 **File:** `auth.php`
+
 - **OIDC Authentication**
   - Integrated Jumbojett’s OpenID Connect client to handle OIDC flows.
   - Reads OIDC configuration from an encrypted JSON file (`adminConfig.json`).
@@ -236,15 +241,17 @@ The enhancements extend the existing drag-and-drop functionality by adding a hea
   - Implemented robust error handling for authentication failures.
   - Session regeneration after successful login to mitigate session fixation risks.
 
-**Configuration Handling**
+**Configuration Handling**  
 
 **File:** `getConfig.php`
+
 - **Secure Configuration Retrieval**
   - Retrieves encrypted OIDC configuration from disk.
   - Decrypts and sends JSON configuration securely to the frontend.
   - Defaults provided if configuration does not exist.
 
 **File:** `updateConfig.php`
+
 - **Secure Configuration Updates**
   - Strictly checks for authenticated admin sessions and validates CSRF tokens.
   - Validates and sanitizes user input thoroughly (OIDC URL, client ID, secret, redirect URI).
@@ -259,14 +266,16 @@ The enhancements extend the existing drag-and-drop functionality by adding a hea
 
 ⸻
 
-**Security and Best Practices**
+**Security and Best Practices**  
+
 - OIDC credentials are securely stored in an encrypted JSON configuration file.
 - Implemented proper sanitization and validation of input data.
 - Protected sensitive admin routes (`updateConfig.php`) with CSRF validation and strict access control.
 
 ⸻
 
-**Possible Improvements**
+**Possible Improvements**  
+
 - **OIDC Logout Support:** Add explicit logout from OIDC providers.
 - **OIDC Discovery Endpoint:** Automatically fetch provider details from `.well-known/openid-configuration`.
 - **Advanced User Mapping:** Allow administrators to map OIDC claims to internal user roles dynamically.
