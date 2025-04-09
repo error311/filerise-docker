@@ -1,4 +1,79 @@
-# Changelog
+# FileRise Docker
+
+Visit <https://github.com/error311/FileRise> for details
+
+--
+
+## Folder Sharing Feature - Changelog 4/9/2025
+
+### New Endpoints
+
+- **createFolderShareLink.php:**  
+  - Generates secure, expiring share tokens for folders (with an optional password and allow-upload flag).  
+  - Stores folder share records separately from file shares in `share_folder_links.json`.  
+  - Builds share links that point to **shareFolder.php**, using a proper BASE_URL or the server’s IP when a default placeholder is detected.
+
+- **shareFolder.php:**  
+  - Serves shared folders via GET requests by reading tokens from `share_folder_links.json`.
+  - Validates token expiration and password (if set).
+  - Displays folder contents with pagination (10 items per page) and shows file sizes in megabytes.
+  - Provides navigation links (Prev, Next, and numbered pages) for folder listings.
+  - Includes an upload form (if allowed) that redirects back to the same share page after upload.
+  
+- **downloadSharedFile.php:**  
+  - A dedicated, secure download endpoint for shared files.
+  - Validates the share token and ensures the requested file is inside the shared folder.
+  - Serves files using proper MIME types and Content-Disposition headers (inline for images, attachment for others).
+
+- **uploadToSharedFolder.php:**  
+  - Handles file uploads for public folder shares.
+  - Enforces file size limits and file type whitelists.
+  - Generates unique filenames (with a unique prefix) to prevent collisions.
+  - Updates metadata for the uploaded file (upload date and sets uploader as "Outside Share").
+  - Redirects back to **shareFolder.php** after a successful upload so the file listing refreshes.
+
+### New Front-End Module
+
+- **folderShareModal.js:**  
+  - Provides a modal interface for users to generate folder share links.
+  - Includes expiration selection, optional password entry, and an allow-upload checkbox.
+  - Uses the **createFolderShareLink.php** endpoint to generate share links.
+  - Displays the generated share link with a “copy to clipboard” button.
+
+---
+
+## Changes 4/8/2025
+
+**May have missed some stuff or could have bugs. Please report any issue you may encounter.**
+
+- **i18n Integration:**
+  - Implemented a semi-complete internationalization (i18n) system for all user-facing texts in FileRise.
+  - Created an `i18n.js` module containing a translations object with full keys for English (en), Spanish (es), and French (fr).
+  - Updated JavaScript code to replace hard-coded strings with the `t()` translation function.
+  - Enhanced HTML and modal templates to support dynamic language translations using data attributes (data-i18n-key, data-i18n-placeholder, etc.).
+
+- **Language Dropdown & Persistence:**
+  - Added a language dropdown to the user panel modal allowing users to select their preferred language.
+  - Persisted the selected language in localStorage, ensuring that the preferred language is automatically applied on page refresh.
+  - Updated main.js to load and set the user’s language preference on DOMContentLoaded by calling `setLocale()` and `applyTranslations()`.
+
+- **Bug Fixes & Improvements:**
+  - Fixed issues with evaluation of translation function calls in template literals (ensured proper syntax with `${t("key")}`).
+  - Updated the t() function to be more defensive against missing keys.
+  - Provided instructions and code examples to ensure the language change settings are reliably saved and applied across sessions.
+
+- **ZIP Download Flow**
+  - Progress Modal: In the ZIP download handler (confirmDownloadZip), added code to show a progress modal (with a spinning icon) as soon as the user confirms the download and before the request to create the ZIP begins. Once the blob is received or an error occurs, we hide the progress modal.
+  - Inline Handlers and Global Exposure: Ensured that functions like confirmDownloadZip are attached to the global window object (or called via appropriate inline handlers) so that the inline onclick events in the HTML work without reference errors.
+
+- **Single File Download Flow**
+  - Modal Popup for Single File: Replaced the direct download link for single files with a modal-driven flow. When the download button is clicked, the openDownloadModal(fileName, folder) function is called. This stores the file details and shows a modal where the user can confirm (or edit) the file name.
+  - Confirm Download Function: When the user clicks the Download button in the modal, the confirmSingleDownload() function is called. This function constructs a URL for download.php (using GET parameters for folder and file), fetches the file as a blob, and triggers a download using a temporary anchor element. A progress modal is also used here to give feedback during the download process.
+
+- **Zip Extraction**
+  - Reused Zip Download modal to use same progress Modal Popup with Extracting files.... text.
+
+---
 
 ## Changes 4/7/2025 v1.0.9
 
