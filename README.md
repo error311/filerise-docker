@@ -4,6 +4,40 @@ Visit <https://github.com/error311/FileRise> for details
 
 --
 
+## Shift Key Multi‑Selection Changes 4/10/2025 v1.1.1
+
+- **Implemented Range Selection:**
+  - Modified the `toggleRowSelection` function so that when the Shift key is held down, all rows between the last clicked (anchor) row (stored as `window.lastSelectedFileRow`) and the currently clicked row are selected.
+- **Modifier Handling:**
+  - Regular clicks (or Ctrl/Cmd clicks) simply toggle the clicked row without clearing other selections.
+- **Prevented Default Browser Behavior:**
+  - Added `event.preventDefault()` in the Shift‑click branch to avoid unwanted text selection.
+- **Maintaining the Anchor:**
+  - The last clicked row is stored for future range selections.
+
+## Total Files and File Size Summary
+
+- **Size Calculation:**
+  - Created `parseSizeToBytes(sizeStr)` to convert file size strings (e.g. `"456.9KB"`, `"1.2 MB"`) into a numerical byte value.
+  - Created `formatSize(totalBytes)` to format a byte value into a human‑readable string (choosing between Bytes, KB, MB, or GB).
+  - Created `buildFolderSummary(filteredFiles)` to:
+    - Sum the sizes of all files (using `parseSizeToBytes`).
+    - Count the total number of files.
+- **Dynamic Display in `loadFileList`:**
+  - Updated `loadFileList` to update a summary element (with `id="fileSummary"`) inside the `#fileListActions` container when files are present.
+  - When no files are found, the summary element is hidden (setting its `display` to `"none"` or clearing the container).
+- **Responsive Styling:**
+  - Added CSS media queries to the `#fileSummary` element so that on small screens it is centered and any extra side margins are removed. Dark and light mode supported.
+
+- **Other changes**
+
+  - `shareFolder.php` updated to display format size.
+  - Fix to prevent the filename text from overflowing its container in the gallery view.
+  - Reduced header height.
+  - Create Folder changed to Material Icon `create_new_folder`
+
+---
+
 ## Folder Sharing Feature - Changelog 4/9/2025
 
 ### New Endpoints
