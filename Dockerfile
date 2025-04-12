@@ -3,7 +3,7 @@
 #############################
 # Source Stage – clone your FileRise app
 #############################
-FROM ubuntu:22.04 AS appsource
+FROM ubuntu:24.04 AS appsource
 RUN apt-get update && \
     apt-get install -y --no-install-recommends git ca-certificates && \
     rm -rf /var/lib/apt/lists/*
@@ -27,7 +27,7 @@ RUN composer install --no-dev --optimize-autoloader
 #############################
 # Final Stage – runtime image
 #############################
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 LABEL by=error311
 
