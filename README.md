@@ -8,6 +8,7 @@ Visit <https://github.com/error311/FileRise> for details
 
 - Moved Gallery view toggle button into header.
 - Removed css entries that are not needed anymore for Gallery View Toggle.
+- Change search box text when enabling advanced search.
 
 ### Advanced Search Implementation
 
