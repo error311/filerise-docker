@@ -4,13 +4,15 @@ Visit <https://github.com/error311/FileRise> for details
 
 ---
 
-## Changes 4/13/2025
+## Changes 4/13/2025 v1.1.3
 
 - Decreased header height some more and clickable logo.
 - authModals.js fully updated with i18n.js keys.
 - main.js added Dark & Light mode i18n.js keys.
 - New Admin section Header Settings to change Header Title.
 - Admin Panel confirm unsaved changes.
+- Added translations and data attributes for almost all user-facing text
+- Extend i18n support: Add new translation keys for Download and Share modals
 
 ---
 
