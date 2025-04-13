@@ -4,6 +4,16 @@ Visit <https://github.com/error311/FileRise> for details
 
 ---
 
+## Changes 4/13/2025
+
+- Decreased header height some more and clickable logo.
+- authModals.js fully updated with i18n.js keys.
+- main.js added Dark & Light mode i18n.js keys.
+- New Admin section Header Settings to change Header Title.
+- Admin Panel confirm unsaved changes.
+
+---
+
 ## Changes 4/12/2025
 
 - Moved Gallery view toggle button into header.
