@@ -62,6 +62,7 @@ RUN set -eux; \
     usermod -g ${PGID} www-data
 
 # Copy application code and vendor directory
+COPY custom-php.ini /etc/php/8.3/apache2/conf.d/99-app-tuning.ini
 COPY --from=appsource /var/www /var/www
 COPY --from=composer  /app/vendor /var/www/vendor
 
