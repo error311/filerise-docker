@@ -33,12 +33,54 @@ if [ -f "$CONFIG_FILE" ]; then
   fi
 fi
 
+# Ensure the PHP configuration directory exists
+mkdir -p /etc/php/8.3/apache2/conf.d
+
 # Update PHP upload limits at runtime if TOTAL_UPLOAD_SIZE is set.
 if [ -n "$TOTAL_UPLOAD_SIZE" ]; then
   echo "🔄 Updating PHP upload limits with TOTAL_UPLOAD_SIZE=$TOTAL_UPLOAD_SIZE"
-  echo "upload_max_filesize = $TOTAL_UPLOAD_SIZE" > /etc/php/8.1/apache2/conf.d/90-custom.ini
-  echo "post_max_size = $TOTAL_UPLOAD_SIZE" >> /etc/php/8.1/apache2/conf.d/90-custom.ini
+  echo "upload_max_filesize = $TOTAL_UPLOAD_SIZE" > /etc/php/8.3/apache2/conf.d/99-custom.ini
+  echo "post_max_size = $TOTAL_UPLOAD_SIZE" >> /etc/php/8.3/apache2/conf.d/99-custom.ini
 fi
+
+# Update Apache LimitRequestBody based on TOTAL_UPLOAD_SIZE if set.
+if [ -n "$TOTAL_UPLOAD_SIZE" ]; then
+  size_str=$(echo "$TOTAL_UPLOAD_SIZE" | tr '[:upper:]' '[:lower:]')
+  factor=1
+  case "${size_str: -1}" in
+    g)
+      factor=$((1024*1024*1024))
+      size_num=${size_str%g}
+      ;;
+    m)
+      factor=$((1024*1024))
+      size_num=${size_str%m}
+      ;;
+    k)
+      factor=1024
+      size_num=${size_str%k}
+      ;;
+    *)
+      size_num=$size_str
+      ;;
+  esac
+  LIMIT_REQUEST_BODY=$((size_num * factor))
+  echo "🔄 Setting Apache LimitRequestBody to $LIMIT_REQUEST_BODY bytes (from TOTAL_UPLOAD_SIZE=$TOTAL_UPLOAD_SIZE)"
+  cat <<EOF > /etc/apache2/conf-enabled/limit_request_body.conf
+<Directory "/var/www">
+    LimitRequestBody $LIMIT_REQUEST_BODY
+</Directory>
+EOF
+fi
+
+# Set Apache Timeout (default is 300 seconds)
+echo "🔄 Setting Apache Timeout to 600 seconds"
+cat <<EOF > /etc/apache2/conf-enabled/timeout.conf
+Timeout 600
+EOF
+
+echo "🔥 Final Apache Timeout configuration:"
+cat /etc/apache2/conf-enabled/timeout.conf
 
 # Update Apache ports if environment variables are provided
 if [ -n "$HTTP_PORT" ]; then
@@ -109,6 +151,12 @@ echo "🔑 Fixing permissions for /var/www..."
 find /var/www -type f -exec chmod 664 {} \;
 find /var/www -type d -exec chmod 775 {} \;
 chown -R ${PUID:-99}:${PGID:-100} /var/www
+
+echo "🔥 Final PHP configuration (90-custom.ini):"
+cat /etc/php/8.3/apache2/conf.d/90-custom.ini
+
+echo "🔥 Final Apache configuration (limit_request_body.conf):"
+cat /etc/apache2/conf-enabled/limit_request_body.conf
 
 echo "🔥 Starting Apache..."
 exec apachectl -D FOREGROUND
