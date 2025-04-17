@@ -4,6 +4,53 @@ Visit <https://github.com/error311/FileRise> for details
 
 ---
 
+## Changes 4/17/2025
+
+- Generate OpenAPI spec and API HTML docs
+  - Fully auto‑generated OpenAPI spec (`openapi.json`) and interactive HTML docs (`api.html`) powered by Redoc.
+- .gitattributes added to mark (`openapi.json`) & (`api.html`) as documentation.
+- User Panel added API Docs link.
+
+---
+
+## Changes 4/16 Refactor API endpoints and modularize controllers and models
+
+- Reorganized project structure to separate API logic into dedicated controllers and models:
+  - Created adminController, userController, fileController, folderController, uploadController, and authController.
+  - Created corresponding models (AdminModel, UserModel, FileModel, FolderModel, UploadModel, AuthModel) for business logic.
+
+- Consolidated API endpoints under the /public/api folder with subfolders for admin, auth, file, folder, and upload endpoints.
+
+- Added inline OpenAPI annotations to document key endpoints (e.g., getConfig.php, updateConfig.php) for improved API documentation.
+
+- Updated configuration retrieval and update logic in AdminModel and AdminController to handle OIDC and login option booleans consistently, fixing issues with basic auth settings not updating on the login page.
+
+- Updated the client-side auth.js to correctly reference API endpoints (adjusted query selectors to reflect new document root) and load admin configuration from the updated API endpoints.
+
+- Minor improvements to CSRF token handling, error logging, and overall code readability.
+
+This refactor improves maintainability, testability, and documentation clarity across all API endpoints.
+
+### Refactor fixes and adjustments
+
+- Added fallback checks for disableFormLogin / disableBasicAuth / disableOIDCLogin when coming in either at the top level or under loginOptions.
+- Updated auth.js to read and store the nested loginOptions booleans correctly in localStorage, then show/hide the Basic‑Auth and OIDC buttons as configured.
+- Changed the logout controller to header("Location: /index.html?logout=1") so after /api/auth/logout.php it lands on the root index.html, not under /api/auth/.
+- Switched your share modal code to use a leading slash ("/api/file/share.php") so it generates absolute URLs instead of relative /share.php.
+- In the shared‑folder gallery, adjusted the client‑side image path to point at /uploads/... instead of /api/folder/uploads/...
+- Updated both AdminModel defaults and the AuthController to use the exact full path
+- Network Utilities Overhaul swapped out the old fetch wrapper for one that always reads the raw response, tries to JSON.parse it, and then either returns the parsed object on ok or throws it on error.
+- Adjusted your submitLogin .catch() to grab the thrown object (or string) and pass that through to showToast, so now “Invalid credentials” actually shows up.
+- Pulled the common session‑setup and “remember me” logic into two new helpers, finalizeLogin() (for AJAX/form/basic/TOTP) and finishBrowserLogin() (for OIDC redirects). That removed tons of duplication and ensures every path calls the same permission‑loading code.
+- Ensured that after you POST just a totp_code, we pick up pending_login_user/pending_login_secret, verify it, then immediately call finalizeLogin().
+- Expanded checkAuth.php Response now returns all three flags—folderOnly, readOnly, and disableUpload so client can handle every permission.
+- In auth.js’s updateAuthenticatedUI(), write all three flags into localStorage whenever you land on the app (OIDC, basic or form). That guarantees consistent behavior across page loads.
+- Made sure the OIDC handler reads the live config via AdminModel::getConfig() and pushes you through the TOTP flow if needed, then back to /index.html.
+- Dockerfile, custom-php.ini & start.sh moved into main repo for easier onboarding.
+- filerise-docker changed to dedicated CI/CD pipeline
+
+---
+
 ## Changes 4/15/2025
 
 - Adjust Gallery View max columns based on screen size
