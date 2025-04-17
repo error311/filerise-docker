@@ -46,6 +46,7 @@ jobs:
           file: ./app/Dockerfile        # ← use the Dockerfile moved into FileRise
           push: true
           tags: error311/filerise-docker:latest
+          platforms: linux/amd64,linux/arm64
           cache-from: type=local,src=/tmp/.docker-cache
           cache-to: type=local,dest=/tmp/.docker-cache
           secrets: |
