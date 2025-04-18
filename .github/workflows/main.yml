@@ -45,7 +45,9 @@ jobs:
           context: ./app                # ← build context is the FileRise code
           file: ./app/Dockerfile        # ← use the Dockerfile moved into FileRise
           push: true
-          tags: error311/filerise-docker:latest
+          tags: |
+            error311/filerise-docker:latest
+            error311/filerise-docker:${{ github.run_number }}          
           platforms: linux/amd64,linux/arm64
           cache-from: type=local,src=/tmp/.docker-cache
           cache-to: type=local,dest=/tmp/.docker-cache
