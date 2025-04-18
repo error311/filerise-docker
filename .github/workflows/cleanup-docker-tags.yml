@@ -1,0 +1,48 @@
+name: Cleanup old Docker Hub tags
+
+# Run once a week (Sunday at 3:00 AM), and also manually via workflow_dispatch
+on:
+  schedule:
+    - cron: '40 8 * * *'
+  workflow_dispatch:
+
+jobs:
+  prune:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to Docker Hub and get token
+        id: login
+        run: |
+          TOKEN=$(curl -s -H "Content-Type: application/json" \
+            -X POST -d '{"username":"'"${{ secrets.DOCKER_USERNAME }}"'","password":"'"${{ secrets.DOCKER_PASSWORD }}"'"}' \
+            https://hub.docker.com/v2/users/login/ | jq -r .token)
+          echo "token=$TOKEN" >> $GITHUB_OUTPUT
+
+      - name: Delete tags older than 15 days
+        env:
+          DOCKERHUB_TOKEN: ${{ steps.login.outputs.token }}
+        run: |
+          REPO="error311/filerise-docker"
+          # threshold timestamp 15 days ago
+          THRESHOLD=$(date -d '15 days ago' --iso-8601=seconds)
+          PAGE=1
+
+          while true; do
+            JSON=$(curl -s -H "Authorization: JWT $DOCKERHUB_TOKEN" \
+              "https://hub.docker.com/v2/repositories/$REPO/tags/?page=$PAGE&page_size=100")
+            # extract tag names older than threshold, but skip 'latest'
+            TAGS=$(echo "$JSON" | jq -r \
+              '.results[]
+               | select(.name!="latest" and .tag_last_pushed < "'"$THRESHOLD"'")
+               | .name')
+            if [[ -z "$TAGS" ]]; then
+              break
+            fi
+            for tag in $TAGS; do
+              echo "🗑️ Deleting $REPO:$tag"
+              curl -s -X DELETE \
+                -H "Authorization: JWT $DOCKERHUB_TOKEN" \
+                "https://hub.docker.com/v2/repositories/$REPO/tags/$tag/"
+            done
+            ((PAGE++))
+          done
