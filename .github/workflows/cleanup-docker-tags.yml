@@ -1,6 +1,6 @@
 name: Cleanup old Docker Hub tags
 
-# Run once a week (Sunday at 3:00 AM), and also manually via workflow_dispatch
+# Run once a week (Sunday at 3:00 AM Eastern), and also manually via workflow_dispatch
 on:
   schedule:
     - cron: '0 3 * * 0'
@@ -32,24 +32,23 @@ jobs:
           THRESHOLD=$(date -u -d '15 days ago' +%Y-%m-%dT%H:%M:%SZ)
           echo "Threshold for deletion: $THRESHOLD"
 
-          PAGE=1
-          while :; do
-            echo "Fetching page $PAGE of tags…"
-            JSON=$(curl -s -H "Authorization: JWT $DOCKERHUB_TOKEN" \
-              "https://hub.docker.com/v2/repositories/$REPO/tags/?page=$PAGE&page_size=100")
-            COUNT=$(echo "$JSON" | jq '.results | length')
-            echo "  → $COUNT tags on this page"
+          # start with the first page of tags
+          NEXT_URL="https://hub.docker.com/v2/repositories/$REPO/tags/?page_size=100"
 
-            # select tag names older than threshold, but skip 'latest'
+          while [ "$NEXT_URL" != "null" ]; do
+            echo "Fetching $NEXT_URL"
+            JSON=$(curl -s -H "Authorization: JWT $DOCKERHUB_TOKEN" "$NEXT_URL")
+
+            # select tag names older than threshold, skip 'latest'
             TAGS=$(echo "$JSON" | jq -r \
-              '.results[] 
+              '.results[]
                | select(.name!="latest" and (.last_updated // empty) < "'"$THRESHOLD"'")
                | .name')
 
-            if [[ -z "$TAGS" ]]; then
-              echo "  → no tags older than 15 days on page $PAGE"
+            if [ -z "$TAGS" ]; then
+              echo "  → no tags older than 15 days on this page"
             else
-              echo "  → will delete these tags:"
+              echo "  → deleting these tags:"
               echo "$TAGS" | sed 's/^/    - /'
               for tag in $TAGS; do
                 echo "Deleting $REPO:$tag"
@@ -59,6 +58,6 @@ jobs:
               done
             fi
 
-            [[ $COUNT -lt 100 ]] && break
-            ((PAGE++))
+            # get the URL for the next page (or "null" if done)
+            NEXT_URL=$(echo "$JSON" | jq -r '.next')
           done
