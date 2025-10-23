@@ -2,7 +2,7 @@
 
 This repository no longer contains the application code, Dockerfile, or `start.sh` script. Instead, it hosts the GitHub Actions workflow that builds and publishes the FileRise Docker image for multiple CPU architectures (amd64 & arm64).
 
-Visit <https://github.com/error311/FileRise> for details
+Visit <https://github.com/error311/FileRise> for additional details
 
 ---
 
