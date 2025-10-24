@@ -2,15 +2,39 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+    paths:
+      - 'VERSION'
+      - 'CHANGELOG.md'
+      - '.github/workflows/main.yml'
+      - 'Dockerfile'
+      - 'app/**'
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout the FileRise application code into `app/`
+      # 0) Checkout THIS repo (filerise-docker) so we can read VERSION
+      - name: Checkout filerise-docker
+        uses: actions/checkout@v4
+
+      # 1) Read version (from VERSION written by FileRise workflow)
+      - name: Read version
+        id: ver
+        run: |
+          if [[ -f VERSION ]]; then
+            V="$(tr -d '[:space:]' < VERSION)"
+            if [[ -n "$V" ]]; then
+              echo "version=$V" >> $GITHUB_OUTPUT
+            else
+              echo "VERSION file is empty"; exit 1
+            fi
+          else
+            echo "VERSION file not found"; exit 1
+          fi
+
+      # 2) Checkout the FileRise application code into `app/`
       - name: Checkout FileRise code
         uses: actions/checkout@v4
         with:
@@ -19,7 +43,7 @@ jobs:
           path: app
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3       
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -29,21 +53,21 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-
-      # Build & push, pointing at the FileRise context & Dockerfile
+      # 3) Build & push (context is the FileRise code)
       - name: Build and push Docker image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v6
         with:
-          context: ./app                # ← build context is the FileRise code
-          file: ./app/Dockerfile        # ← use the Dockerfile moved into FileRise
+          context: ./app
+          file: ./app/Dockerfile
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: |
             error311/filerise-docker:latest
-            error311/filerise-docker:${{ github.run_number }}          
-          platforms: linux/amd64,linux/arm64
+            error311/filerise-docker:${{ steps.ver.outputs.version }}
+          labels: |
+            org.opencontainers.image.title=FileRise
+            org.opencontainers.image.version=${{ steps.ver.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          provenance: false   # avoid registry hiccups
-          sbom: false         # same
-          secrets: |
-            id=git_token,src=${{ secrets.GIT_TOKEN }}
+          provenance: false
+          sbom: false
