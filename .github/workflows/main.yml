@@ -1,3 +1,4 @@
+---
 name: CI/CD Pipeline
 
 on:
@@ -13,13 +14,10 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      # 0) Checkout THIS repo (filerise-docker) so we can read VERSION
       - name: Checkout filerise-docker
         uses: actions/checkout@v4
 
-      # 1) Read version (from VERSION written by FileRise workflow)
       - name: Read version
         id: ver
         run: |
@@ -34,13 +32,32 @@ jobs:
             echo "VERSION file not found"; exit 1
           fi
 
-      # 2) Checkout the FileRise application code into `app/`
       - name: Checkout FileRise code
         uses: actions/checkout@v4
         with:
           repository: error311/FileRise
           token: ${{ secrets.GITHUB_TOKEN }}
           path: app
+
+      - name: Ensure stamper is executable
+        run: |
+          chmod +x app/scripts/stamp-assets.sh
+
+      - name: Stamp app assets inside build context
+        run: |
+          set -euo pipefail
+          VER="${{ steps.ver.outputs.version }}"
+          app/scripts/stamp-assets.sh "${VER}" "$(pwd)/app"
+
+      - name: Verify placeholders are gone (app/)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -R -n "{{APP_QVER}}\|{{APP_VER}}" app --include='*.html' --include='*.php' --include='*.css' --include='*.js' 2>/dev/null; then
+            echo "ERROR: Found unreplaced placeholders above in app/."
+            exit 1
+          fi
+          echo "OK: No unreplaced placeholders in app/."
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -53,7 +70,6 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # 3) Build & push (context is the FileRise code)
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
