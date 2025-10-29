@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
       - 'VERSION'
       - 'CHANGELOG.md'
@@ -20,11 +20,13 @@ jobs:
 
       - name: Read version
         id: ver
+        shell: bash
         run: |
+          set -euo pipefail
           if [[ -f VERSION ]]; then
             V="$(tr -d '[:space:]' < VERSION)"
             if [[ -n "$V" ]]; then
-              echo "version=$V" >> $GITHUB_OUTPUT
+              echo "version=$V" >> "$GITHUB_OUTPUT"
             else
               echo "VERSION file is empty"; exit 1
             fi
@@ -40,20 +42,28 @@ jobs:
           path: app
 
       - name: Ensure stamper is executable
+        shell: bash
         run: |
+          set -euo pipefail
+          test -f app/scripts/stamp-assets.sh || { echo "stamper missing at app/scripts/stamp-assets.sh"; exit 1; }
+          # Normalize CRLF if present (e.g. edited on Windows)
+          sed -i 's/\r$//' app/scripts/stamp-assets.sh || true
           chmod +x app/scripts/stamp-assets.sh
 
       - name: Stamp app assets inside build context
+        shell: bash
         run: |
           set -euo pipefail
           VER="${{ steps.ver.outputs.version }}"
-          app/scripts/stamp-assets.sh "${VER}" "$(pwd)/app"
+          # Call via bash to avoid relying on exec bit
+          bash app/scripts/stamp-assets.sh "${VER}" "$(pwd)/app"
 
       - name: Verify placeholders are gone (app/)
         shell: bash
         run: |
           set -euo pipefail
-          if grep -R -n "{{APP_QVER}}\|{{APP_VER}}" app --include='*.html' --include='*.php' --include='*.css' --include='*.js' 2>/dev/null; then
+          if grep -R -n "{{APP_QVER}}\|{{APP_VER}}" app \
+                --include='*.html' --include='*.php' --include='*.css' --include='*.js' 2>/dev/null; then
             echo "ERROR: Found unreplaced placeholders above in app/."
             exit 1
           fi
@@ -61,6 +71,7 @@ jobs:
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
