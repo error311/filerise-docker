@@ -1,5 +1,61 @@
 # Changelog
 
+## Changes 02/16/2026 (v3.5.0)
+
+`release(v3.5.0): async transfer jobs + Transfer Center UX, service-layer API refactors, and folder UI consistency fixes`
+
+**Commit message**  
+
+```text
+release(v3.5.0): async transfer jobs + Transfer Center UX, service-layer API refactors, and folder UI consistency fixes
+
+- transfers: add async job manager + worker + start/status/list/cancel endpoints for file/folder copy/move
+- ui: replace legacy transfer popups with Transfer Center multi-job progress + cancel flow for move operations
+- api/refactor: move admin/pro endpoint logic into Domain services (sources/audit/gateways/portals/metadata/encryption)
+- acl: fix worker-side admin permission parity to prevent false "manage rights required on source" errors
+- folders: align tree/list context menus for encrypt/decrypt and route folder crypto progress through Transfer Center
+- dual-pane/gallery: fix folder row pane targeting and long filename grid overflow in gallery view
+```
+
+**Added**  
+
+- **Async transfer job infrastructure (Core)**
+  - Added transfer job manager + worker orchestration for long-running file/folder copy/move.
+  - Added transfer job endpoints:
+    - `/api/file/transferJobStart.php`
+    - `/api/file/transferJobStatus.php`
+    - `/api/file/transferJobList.php`
+    - `/api/file/transferJobCancel.php`
+  - Added frontend transfer runner module:
+    - `public/js/transferJobs.js`
+- **Domain service layer for API refactors**
+  - Added service classes for source access/admin, audit policy, portal submissions/meta, gateway test, metadata read, disk usage scan launch, and folder encryption orchestration.
+
+**Changed**  
+
+- **Transfer UX**
+  - Main copy/move flows now use async jobs with Transfer Center progress cards (bottom-right), including move cancel support.
+  - Move modal flow now closes promptly when the transfer starts instead of waiting until completion.
+- **Folder encryption UX**
+  - Folder encrypt/decrypt progress now renders in the same Transfer Center UI instead of the legacy crypto modal/pill.
+  - File-list folder context menus now expose Encrypt/Decrypt actions (when caps allow), matching tree context menus.
+- **Controller/API structure**
+  - Refactored selected admin/pro endpoints into thin wrappers backed by domain services while keeping endpoint compatibility.
+- **File-list behavior**
+  - Improved dual-pane state sync and destination refresh after cross-source folder moves.
+  - Gallery cards now preserve configured column count with long filenames (wrapping + constrained grid tracks).
+
+**Fixed**  
+
+- **False ACL failure in cross-source folder moves**
+  - Fixed worker-side admin parity so admin users no longer hit erroneous `Forbidden: manage rights required on source` during async folder moves.
+- **Dual-pane folder navigation regression**
+  - Fixed inline folder-row click handling to resolve pane context correctly (no undefined pane reference / click dead-ends).
+- **Post-move stale folder row state**
+  - Fixed cases where moved folders briefly appeared with stale `0 items` and were not immediately navigable until refresh.
+
+---
+
 ## Changes 02/15/2026 (v3.4.1)
 
 `release(v3.4.1): PHPCS PSR-12 inline-control cleanup for storage adapters/config`
