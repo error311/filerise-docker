@@ -1,5 +1,59 @@
 # Changelog
 
+## Changes 02/19/2026 (v3.5.1)
+
+`release(v3.5.1): authenticated Link File deep links + shared file request mode`
+
+**Commit message**  
+
+```text
+release(v3.5.1): authenticated Link File deep links + shared file request mode
+
+- files(core): add internal authenticated file links (create/resolve token endpoints + ACL-checked deep-link open)
+- ui(files): add Link File in row context menu + toolbar single-selection action with copy-link modal
+- boot/auth: preserve fileLink return URL through login/OIDC, resolve link post-auth, focus/highlight linked file
+- shares: add upload-only File Request mode for shared folders with hide-listing support and dedicated drop-zone UI
+- shared-upload: add per-link validation/rate limits/quota tracking + safer relative-path handling for chunked uploads
+- admin: improve shared links listing with file-request grouping and created-by/source metadata
+```
+
+**Added**  
+
+- **Authenticated internal file deep links (Core)**
+  - Added new API endpoints:
+    - `/api/file/createAuthFileLink.php`
+    - `/api/file/resolveAuthFileLink.php`
+  - Added internal token persistence/lookup for file links in `FileModel`.
+  - Added new frontend link module:
+    - `public/js/fileLink.js`
+- **Shared folder file-request experience**
+  - Added upload-only (“drop”) mode support with hide-listing behavior.
+  - Added dedicated upload UI for drop mode:
+    - `public/js/sharedDropView.js`
+  - Added share options for upload constraints:
+    - max file size
+    - allowed file types
+    - daily file-count limit
+    - daily total-size limit
+    - preserve-folder-structure toggle
+
+**Changed**  
+
+- **File actions/UI**
+  - Added `Link File` action to:
+    - file row context menu
+    - file toolbar (enabled only for exactly one selected file).
+- **Auth/deep-link boot flow**
+  - `main.js` now preserves `?fileLink=` return URL through login/OIDC and resolves it after auth.
+  - Linked file navigation now opens the target folder and selects/highlights the file row.
+- **Folder share modal + public share page**
+  - Share modal now supports both classic folder share and upload-only file request creation.
+  - Public shared-folder view switches between browse mode and drop mode assets/layout.
+- **Admin shared-link management**
+  - Shared links list now distinguishes folder shares vs file requests and surfaces source/creator context.
+
+---
+
 ## Changes 02/16/2026 (v3.5.0)
 
 `release(v3.5.0): async transfer jobs + Transfer Center UX, service-layer API refactors, and folder UI consistency fixes`
